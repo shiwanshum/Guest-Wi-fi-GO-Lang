@@ -6,113 +6,235 @@
     <title>Admin Panel - Guest Wi-Fi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/admin.css">
 </head>
 <body>
-    <div class="sidebar">
-        <div class="brand">
-            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" class="css-i6dzq1"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-            <h2>Admin Portal</h2>
+    <!-- ============================================ -->
+    <!-- LOGIN PAGE -->
+    <!-- ============================================ -->
+    <div id="login-page" class="login-page">
+        <div class="login-bg"></div>
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                    </div>
+                    <h1>Admin Portal</h1>
+                    <p>Sign in to manage your guest network</p>
+                </div>
+                <form id="login-form" class="login-form">
+                    <div class="login-field">
+                        <label for="login-username">Username</label>
+                        <div class="input-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <input type="text" id="login-username" placeholder="Enter username" value="admin" required>
+                        </div>
+                    </div>
+                    <div class="login-field">
+                        <label for="login-password">Password</label>
+                        <div class="input-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <input type="password" id="login-password" placeholder="Enter password" value="admin123" required>
+                            <button type="button" class="toggle-password" id="toggle-password">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="login-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember-me" checked>
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                        <a href="#" id="forgot-password-link">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary login-btn" id="login-btn">
+                        <span class="btn-text">Sign In</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                    <div id="login-error" class="login-error hidden">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                        <span></span>
+                    </div>
+                </form>
+            </div>
+            <div class="login-footer">
+                &copy; 2026 Guest Wi-Fi Portal. All rights reserved.
+            </div>
         </div>
-        <nav>
-            <a href="#" id="nav-sessions" class="active">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                Active Sessions
-            </a>
-            <a href="#" id="nav-network">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-                Virtual Switch
-            </a>
-            <a href="#" id="nav-logs">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                History Logs
-            </a>
-            <a href="#">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                Settings
-            </a>
-        </nav>
     </div>
 
-    <main class="content">
-        <header>
-            <div class="search-bar">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="search-input" placeholder="Search by name, mobile, or IP...">
+    <!-- ============================================ -->
+    <!-- FORGOT PASSWORD MODAL -->
+    <!-- ============================================ -->
+    <div class="modal-backdrop hidden" id="forgot-modal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h2>Reset Password</h2>
+                <button class="close-btn" id="close-forgot">&times;</button>
             </div>
-            <div class="header-actions">
-                <button class="btn btn-outline" id="refresh-btn">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                    Refresh
-                </button>
-                <button class="btn btn-primary">Export Report</button>
+            <div class="modal-body-column">
+                <p style="color:var(--text-muted); margin-bottom:20px; line-height:1.6;">Enter your email address and we'll send you a link to reset your password.</p>
+                <form id="forgot-form">
+                    <div class="input-icon" style="margin-bottom:20px;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <input type="email" id="forgot-email" placeholder="admin@example.com" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;" id="forgot-btn">
+                        <span class="btn-text">Send Reset Link</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                </form>
+                <div id="forgot-success" class="hidden" style="text-align:center; padding:16px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:12px; color:var(--success); margin-top:12px;">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" style="margin-bottom:8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <p id="forgot-msg">Reset link sent successfully!</p>
+                </div>
             </div>
-        </header>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="back-to-login">Back to Login</button>
+            </div>
+        </div>
+    </div>
 
-        <div id="sessions-view">
-            <div class="stats-row">
-                <div class="stat-card">
-                    <h3>Active Users</h3>
-                    <div class="value" id="active-users-count">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Total Registrations (Today)</h3>
-                    <div class="value" id="total-users-count">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Bandwidth Usage</h3>
-                    <div class="value">1.4 GB</div>
-                </div>
+    <!-- ============================================ -->
+    <!-- MAIN ADMIN APP -->
+    <!-- ============================================ -->
+    <div id="admin-app" class="hidden">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="brand">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                <h2>Admin Portal</h2>
             </div>
-
-            <div class="table-container">
-                <table id="sessions-table">
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Device</th>
-                            <th>IP Address</th>
-                            <th>MAC Address</th>
-                            <th>Login Time</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sessions-tbody">
-                        <!-- Rows injected via JS -->
-                    </tbody>
-                </table>
-                <div id="loading-state" class="table-state">
-                    Loading sessions...
-                </div>
-                <div id="empty-state" class="table-state hidden">
-                    No active sessions found.
+            <nav>
+                <a href="#" id="nav-sessions" class="active">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Active Sessions
+                </a>
+                <a href="#" id="nav-network">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                    Virtual Switch
+                </a>
+                <a href="#" id="nav-logs">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    History Logs
+                </a>
+                <a href="#" id="nav-settings">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Settings
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="admin-badge" id="sidebar-admin">
+                    <div class="admin-avatar">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div class="admin-info">
+                        <span class="admin-name" id="sidebar-name">Admin</span>
+                        <span class="admin-role" id="sidebar-role">Super Admin</span>
+                    </div>
+                    <button class="btn-icon" id="logout-btn" title="Sign Out">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Virtual Switch View -->
-        <div id="network-view" class="hidden">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h3 style="color: var(--text-muted); font-size: 1rem; font-weight: 500;">Hardware Management</h3>
-                    <select id="switch-size-select" style="padding: 8px 16px; border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: var(--text-main); border: 1px solid var(--border); outline: none; font-size: 0.9rem;">
+        <!-- Main Content -->
+        <main class="content">
+            <header>
+                <div class="search-bar">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="Search by name, mobile, or IP...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" id="refresh-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                        Refresh
+                    </button>
+                </div>
+            </header>
+
+            <!-- Sessions View -->
+            <div id="sessions-view">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-users">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <div>
+                            <h3>Active Users</h3>
+                            <div class="value" id="active-users-count">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-today">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                        </div>
+                        <div>
+                            <h3>Today Registrations</h3>
+                            <div class="value" id="total-users-count">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-bandwidth">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        </div>
+                        <div>
+                            <h3>Bandwidth Usage</h3>
+                            <div class="value" id="bandwidth-usage">1.4 GB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="sessions-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Name</th>
+                                <th>Mobile</th>
+                                <th>Device</th>
+                                <th>IP Address</th>
+                                <th>MAC Address</th>
+                                <th>Login Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessions-tbody"></tbody>
+                    </table>
+                    <div id="loading-state" class="table-state">
+                        <div class="spinner-lg"></div>
+                        <p>Loading sessions...</p>
+                    </div>
+                    <div id="empty-state" class="table-state hidden">
+                        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1" fill="none" style="color:var(--text-muted); margin-bottom:16px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        <p>No active sessions found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Virtual Switch View -->
+            <div id="network-view" class="hidden">
+                <div class="switch-topbar">
+                    <h3 class="section-title">Hardware Management</h3>
+                    <select id="switch-size-select">
                         <option value="8">8-Port Switch</option>
                         <option value="16">16-Port Switch</option>
                         <option value="24" selected>24-Port Switch</option>
                         <option value="48">48-Port Switch</option>
                     </select>
                 </div>
+
                 <div class="hardware-switch-container">
                     <div class="hardware-switch">
                         <div class="switch-left">
                             <div class="switch-logo">SYS-CORE</div>
                             <div class="switch-model" id="switch-model-label">Virtual Switch 24G</div>
                         </div>
-                        <div class="ports-grid" id="switch-ports">
-                            <!-- 24 ports injected via JS -->
-                        </div>
+                        <div class="ports-grid" id="switch-ports"></div>
                         <div class="switch-right">
                             <div class="status-leds">
                                 <div class="sys-led"><span>SYS</span><div class="led pulse-green"></div></div>
@@ -122,7 +244,6 @@
                     </div>
                 </div>
 
-                <!-- Sliding Panel for Port Config -->
                 <div id="port-config-panel" class="side-panel">
                     <div class="panel-header">
                         <h2 id="config-port-title">Configure Port</h2>
@@ -130,84 +251,174 @@
                     </div>
                     <form id="network-form" class="panel-form">
                         <input type="hidden" id="config-port-num">
-                        
                         <div class="input-group">
                             <label>Port Mode</label>
-                            <select id="port-mode" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:8px; background:rgba(0,0,0,0.2); color:var(--text-main); outline:none;">
+                            <select id="port-mode">
                                 <option value="access">Access (Private)</option>
                                 <option value="trunk">Trunk</option>
                             </select>
                         </div>
-                        
                         <div class="input-group">
-                            <label>Speed Limit (Mbps) <span style="font-size: 0.75rem; color:#888;">0 for unlimited</span></label>
+                            <label>Speed Limit (Mbps) <span class="hint">0 for unlimited</span></label>
                             <input type="number" id="bandwidth-limit" required min="0" value="0">
                         </div>
-
                         <div class="input-group">
                             <label>VLAN ID</label>
-                            <input type="number" id="vlan-id" required min="1" max="4095" placeholder="e.g., 20" title="VLAN ID must be between 1 and 4095">
+                            <input type="number" id="vlan-id" required min="1" max="4095" placeholder="e.g., 20">
                         </div>
                         <div class="input-group">
                             <label>IP Range (CIDR)</label>
-                            <input type="text" id="ip-range" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$" placeholder="192.168.20.0/24" title="Must be a valid IPv4 CIDR (e.g. 192.168.20.0/24)">
+                            <input type="text" id="ip-range" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$" placeholder="192.168.20.0/24">
                         </div>
-                        
                         <div class="input-group">
-                            <label>VIP IPs (Comma separated)</label>
+                            <label>VIP IPs <span class="hint">Comma separated</span></label>
                             <input type="text" id="vip-ips" placeholder="192.168.20.10, 192.168.20.15">
                         </div>
-
                         <div class="input-group">
-                            <label>Description (Optional)</label>
+                            <label>Description <span class="hint">Optional</span></label>
                             <input type="text" id="net-desc" maxlength="255" placeholder="Guest Network Zone B">
                         </div>
                         <button type="submit" class="btn btn-primary" id="add-net-btn">Inject Configuration</button>
-                        <button type="button" class="btn btn-outline" id="remove-net-btn" style="display:none; margin-top: 8px;">Remove VLAN</button>
+                        <button type="button" class="btn btn-outline hidden" id="remove-net-btn" style="margin-top:8px;">Remove VLAN</button>
                     </form>
                 </div>
-            </div>
 
-            <div class="table-container">
-                <table id="networks-table">
-                    <thead>
-                        <tr>
-                            <th>Port</th>
-                            <th>Mode</th>
-                            <th>VLAN ID</th>
-                            <th>IP Range</th>
-                            <th>Speed Limit</th>
-                            <th>VIP IPs</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="networks-tbody">
-                        <!-- Rows injected via JS -->
-                    </tbody>
-                </table>
-                <div id="net-loading-state" class="table-state">
-                    Loading configurations...
-                </div>
-                <div id="net-empty-state" class="table-state hidden">
-                    No Virtual Switches configured.
+                <div class="table-container" style="margin-top:24px;">
+                    <table id="networks-table">
+                        <thead>
+                            <tr>
+                                <th>Port</th>
+                                <th>Mode</th>
+                                <th>VLAN ID</th>
+                                <th>IP Range</th>
+                                <th>Speed Limit</th>
+                                <th>VIP IPs</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="networks-tbody"></tbody>
+                    </table>
+                    <div id="net-loading-state" class="table-state">Loading configurations...</div>
+                    <div id="net-empty-state" class="table-state hidden">No Virtual Switches configured.</div>
                 </div>
             </div>
-        </div>
-    </main>
 
-    <!-- User Details Modal -->
+            <!-- Settings View -->
+            <div id="settings-view" class="hidden">
+                <div class="settings-container">
+                    <div class="settings-sidebar">
+                        <a href="#" class="settings-tab active" data-tab="profile">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Profile
+                        </a>
+                        <a href="#" class="settings-tab" data-tab="admin-sessions">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            Active Sessions
+                        </a>
+                        <a href="#" class="settings-tab" data-tab="security">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            Security
+                        </a>
+                    </div>
+                    <div class="settings-content">
+                        <!-- Profile Tab -->
+                        <div class="settings-pane active" id="tab-profile">
+                            <div class="profile-header">
+                                <div class="profile-avatar">
+                                    <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                                <div>
+                                    <h2 id="profile-name">Admin</h2>
+                                    <p id="profile-role">Super Admin</p>
+                                </div>
+                            </div>
+                            <div class="profile-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Username</span>
+                                    <span class="detail-value" id="profile-username">admin</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Email</span>
+                                    <span class="detail-value" id="profile-email">admin@guestwifi.local</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Role</span>
+                                    <span class="detail-value" id="profile-role-val">Super Admin</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Last Login</span>
+                                    <span class="detail-value" id="profile-last-login">Just now</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Admin Sessions Tab -->
+                        <div class="settings-pane hidden" id="tab-admin-sessions">
+                            <h3 style="margin-bottom:16px;">Current Login Sessions</h3>
+                            <div id="admin-sessions-list">
+                                <div class="table-state" id="admin-sessions-loading">Loading sessions...</div>
+                            </div>
+                        </div>
+
+                        <!-- Security Tab -->
+                        <div class="settings-pane hidden" id="tab-security">
+                            <h3 style="margin-bottom:16px;">Login History</h3>
+                            <div id="login-history-list">
+                                <div class="table-state" id="login-history-loading">Loading login history...</div>
+                            </div>
+                            <div style="margin-top:32px;">
+                                <h3 style="margin-bottom:16px;">Change Password</h3>
+                                <form id="change-password-form" class="change-pwd-form">
+                                    <div class="input-group">
+                                        <label>Current Password</label>
+                                        <input type="password" id="current-pwd" placeholder="Enter current password">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>New Password</label>
+                                        <input type="password" id="new-pwd" placeholder="Enter new password">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Confirm New Password</label>
+                                        <input type="password" id="confirm-pwd" placeholder="Confirm new password">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="width:fit-content;">Update Password</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs View -->
+            <div id="logs-view" class="hidden">
+                <div class="empty-view">
+                    <svg viewBox="0 0 24 24" width="64" height="64" stroke="currentColor" stroke-width="1" fill="none" style="color:var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <h3>History Logs</h3>
+                    <p>Coming soon</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- USER DETAILS MODAL -->
+    <!-- ============================================ -->
     <div class="modal-backdrop hidden" id="user-modal">
-        <div class="modal">
+        <div class="modal modal-lg">
             <div class="modal-header">
                 <h2>Guest Information</h2>
                 <button class="close-btn" id="close-modal">&times;</button>
             </div>
-            <div class="modal-body" id="modal-content">
-                <!-- Content injected via JS -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline">Disconnect User</button>
-                <button class="btn btn-danger">Block MAC</button>
+            <div class="modal-body" id="modal-content"></div>
+            <div class="modal-footer" id="modal-footer-actions">
+                <button class="btn btn-danger" id="disconnect-user">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    Disconnect User
+                </button>
+                <button class="btn btn-danger-outline" id="block-mac">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                    Block MAC
+                </button>
             </div>
         </div>
     </div>

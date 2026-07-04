@@ -46,8 +46,18 @@ func main() {
 	adminMux.HandleFunc("/admin", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/admin.html")
 	})
-	
+
+	// Auth routes (no token required)
+	adminMux.HandleFunc("/api/admin/login", handlers.AdminLoginHandler)
+	adminMux.HandleFunc("/api/admin/logout", handlers.AdminLogoutHandler)
+	adminMux.HandleFunc("/api/admin/forgot-password", handlers.AdminForgotPasswordHandler)
+	adminMux.HandleFunc("/api/admin/check-auth", handlers.AdminCheckAuthHandler)
+
+	// Protected routes
+	adminMux.HandleFunc("/api/admin/profile", handlers.AdminProfileHandler)
 	adminMux.HandleFunc("/api/admin/sessions", handlers.AdminSessionsHandler)
+	adminMux.HandleFunc("/api/admin/active-sessions", handlers.AdminActiveSessionsHandler)
+	adminMux.HandleFunc("/api/admin/login-history", handlers.AdminLoginHistoryHandler)
 	adminMux.HandleFunc("/api/admin/networks", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			handlers.GetNetworksHandler(w, r)
