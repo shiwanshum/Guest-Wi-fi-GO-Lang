@@ -16,11 +16,15 @@
             <h2>Admin Portal</h2>
         </div>
         <nav>
-            <a href="#" class="active">
+            <a href="#" id="nav-sessions" class="active">
                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 Active Sessions
             </a>
-            <a href="#">
+            <a href="#" id="nav-network">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                Virtual Switch
+            </a>
+            <a href="#" id="nav-logs">
                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 History Logs
             </a>
@@ -46,44 +50,93 @@
             </div>
         </header>
 
-        <div class="stats-row">
-            <div class="stat-card">
-                <h3>Active Users</h3>
-                <div class="value" id="active-users-count">0</div>
+        <div id="sessions-view">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <h3>Active Users</h3>
+                    <div class="value" id="active-users-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Registrations (Today)</h3>
+                    <div class="value" id="total-users-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Bandwidth Usage</h3>
+                    <div class="value">1.4 GB</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>Total Registrations (Today)</h3>
-                <div class="value" id="total-users-count">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Bandwidth Usage</h3>
-                <div class="value">1.4 GB</div>
+
+            <div class="table-container">
+                <table id="sessions-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Device</th>
+                            <th>IP Address</th>
+                            <th>MAC Address</th>
+                            <th>Login Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessions-tbody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+                <div id="loading-state" class="table-state">
+                    Loading sessions...
+                </div>
+                <div id="empty-state" class="table-state hidden">
+                    No active sessions found.
+                </div>
             </div>
         </div>
 
-        <div class="table-container">
-            <table id="sessions-table">
-                <thead>
-                    <tr>
-                        <th>Status</th>
-                        <th>Name</th>
-                        <th>Mobile</th>
-                        <th>Device</th>
-                        <th>IP Address</th>
-                        <th>MAC Address</th>
-                        <th>Login Time</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="sessions-tbody">
-                    <!-- Rows injected via JS -->
-                </tbody>
-            </table>
-            <div id="loading-state" class="table-state">
-                Loading sessions...
+        <!-- Virtual Switch View -->
+        <div id="network-view" class="hidden">
+            <div class="stats-row">
+                <div class="stat-card network-form-card" style="grid-column: span 3;">
+                    <h3 style="margin-bottom: 16px; color: var(--text-main); font-weight: 600;">Publish New IP Range / VLAN</h3>
+                    <form id="network-form" style="display: grid; grid-template-columns: 1fr 1fr 2fr auto; gap: 16px; align-items: end;">
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">VLAN ID</label>
+                            <input type="number" id="vlan-id" required placeholder="e.g., 20" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;">
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">IP Range (CIDR)</label>
+                            <input type="text" id="ip-range" required placeholder="192.168.20.0/24" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;">
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Description</label>
+                            <input type="text" id="net-desc" placeholder="Guest Network Zone B" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="add-net-btn" style="height: 38px;">Inject VLAN</button>
+                    </form>
+                </div>
             </div>
-            <div id="empty-state" class="table-state hidden">
-                No active sessions found.
+
+            <div class="table-container">
+                <table id="networks-table">
+                    <thead>
+                        <tr>
+                            <th>VLAN ID</th>
+                            <th>IP Range</th>
+                            <th>Description</th>
+                            <th>Created At</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="networks-tbody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+                <div id="net-loading-state" class="table-state">
+                    Loading configurations...
+                </div>
+                <div id="net-empty-state" class="table-state hidden">
+                    No Virtual Switches configured.
+                </div>
             </div>
         </div>
     </main>

@@ -39,6 +39,15 @@ func main() {
 	})
 	
 	http.HandleFunc("/api/admin/sessions", handlers.AdminSessionsHandler)
+	http.HandleFunc("/api/admin/networks", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			handlers.GetNetworksHandler(w, r)
+		} else if r.Method == http.MethodPost {
+			handlers.CreateNetworkHandler(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {

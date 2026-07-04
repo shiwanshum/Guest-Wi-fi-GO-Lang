@@ -16,7 +16,16 @@ func InitDB(filepath string) {
 		log.Fatal(err)
 	}
 
-	createTableQuery := `
+	_, err = DB.Exec(`
+		PRAGMA journal_mode = WAL;
+		PRAGMA synchronous = NORMAL;
+		PRAGMA foreign_keys = ON;
+	`)
+	if err != nil {
+		log.Fatalf("Error enabling WAL mode: %v", err)
+	}
+
+	createTablesQuery := `
 	CREATE TABLE IF NOT EXISTS guest_sessions (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT,
@@ -35,10 +44,18 @@ func InitDB(filepath string) {
 		data_download INTEGER DEFAULT 0,
 		data_upload INTEGER DEFAULT 0
 	);
+
+	CREATE TABLE IF NOT EXISTS networks (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		vlan_id INTEGER NOT NULL,
+		ip_range TEXT NOT NULL,
+		description TEXT,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
 	`
-	_, err = DB.Exec(createTableQuery)
+	_, err = DB.Exec(createTablesQuery)
 	if err != nil {
-		log.Fatalf("Error creating table: %v", err)
+		log.Fatalf("Error creating tables: %v", err)
 	}
 	log.Println("Database initialized successfully.")
 }

@@ -134,6 +134,100 @@ document.addEventListener('DOMContentLoaded', () => {
 
     refreshBtn.addEventListener('click', fetchSessions);
 
+    // Navigation
+    const navSessions = document.getElementById('nav-sessions');
+    const navNetwork = document.getElementById('nav-network');
+    const sessionsView = document.getElementById('sessions-view');
+    const networkView = document.getElementById('network-view');
+
+    navSessions.addEventListener('click', (e) => {
+        e.preventDefault();
+        navSessions.classList.add('active');
+        navNetwork.classList.remove('active');
+        sessionsView.classList.remove('hidden');
+        networkView.classList.add('hidden');
+        fetchSessions();
+    });
+
+    navNetwork.addEventListener('click', (e) => {
+        e.preventDefault();
+        navNetwork.classList.add('active');
+        navSessions.classList.remove('active');
+        networkView.classList.remove('hidden');
+        sessionsView.classList.add('hidden');
+        fetchNetworks();
+    });
+
+    // Virtual Switch Logic
+    const networksTbody = document.getElementById('networks-tbody');
+    const netForm = document.getElementById('network-form');
+    const addNetBtn = document.getElementById('add-net-btn');
+    const netLoading = document.getElementById('net-loading-state');
+    const netEmpty = document.getElementById('net-empty-state');
+
+    async function fetchNetworks() {
+        netLoading.classList.remove('hidden');
+        netEmpty.classList.add('hidden');
+        networksTbody.innerHTML = '';
+
+        try {
+            const res = await fetch('/api/admin/networks');
+            if (res.ok) {
+                const data = await res.json() || [];
+                netLoading.classList.add('hidden');
+                
+                if (data.length === 0) {
+                    netEmpty.classList.remove('hidden');
+                } else {
+                    data.forEach(net => {
+                        const tr = document.createElement('tr');
+                        const created = new Date(net.created_at).toLocaleString();
+                        tr.innerHTML = `
+                            <td><strong>${net.vlan_id}</strong></td>
+                            <td>${net.ip_range}</td>
+                            <td>${net.description || '-'}</td>
+                            <td>${created}</td>
+                            <td><span class="status-badge status-online">Active</span></td>
+                        `;
+                        networksTbody.appendChild(tr);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Failed to fetch networks', error);
+        }
+    }
+
+    netForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        addNetBtn.disabled = true;
+        addNetBtn.textContent = 'Injecting...';
+
+        const vlan_id = parseInt(document.getElementById('vlan-id').value);
+        const ip_range = document.getElementById('ip-range').value;
+        const description = document.getElementById('net-desc').value;
+
+        try {
+            const res = await fetch('/api/admin/networks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vlan_id, ip_range, description })
+            });
+
+            if (res.ok) {
+                netForm.reset();
+                fetchNetworks();
+            } else {
+                alert('Failed to add Virtual Switch config');
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            addNetBtn.disabled = false;
+            addNetBtn.textContent = 'Inject VLAN';
+        }
+    });
+
     // Initial fetch
     fetchSessions();
 });

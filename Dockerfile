@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM golang:1.22-alpine AS builder
+FROM golang:alpine AS builder
 
 # Install gcc and musl-dev for CGO (required by go-sqlite3)
 RUN apk add --no-cache gcc musl-dev
