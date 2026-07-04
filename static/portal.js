@@ -63,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 regView.classList.add('hidden');
                 otpView.classList.remove('hidden');
             } else {
-                alert('Registration failed. Please try again.');
+                const errorMsg = await res.text();
+                alert(`Registration failed: ${errorMsg}`);
             }
         } catch (error) {
             console.error('Error:', error);

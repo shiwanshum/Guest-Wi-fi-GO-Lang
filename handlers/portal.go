@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
@@ -38,7 +39,29 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
+		return
+	}
+
+	// Backend Validation Crosscheck
+	req.Name = strings.TrimSpace(req.Name)
+	if req.Name == "" {
+		http.Error(w, "Name is required", http.StatusBadRequest)
+		return
+	}
+
+	if match, _ := regexp.MatchString(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`, req.Email); !match {
+		http.Error(w, "Invalid email address format", http.StatusBadRequest)
+		return
+	}
+
+	if match, _ := regexp.MatchString(`^\+\d{1,3}-\d{10}$`, req.Mobile); !match {
+		http.Error(w, "Invalid mobile number format. Expected format: +CC-XXXXXXXXXX", http.StatusBadRequest)
+		return
+	}
+
+	if req.Purpose == "" {
+		http.Error(w, "Purpose of visit is required", http.StatusBadRequest)
 		return
 	}
 
