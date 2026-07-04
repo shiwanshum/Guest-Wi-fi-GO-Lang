@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  portal:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NATS_URL=nats://nats:4222
+    volumes:
+      - portal_data:/app
+    depends_on:
+      - nats
+
+  nats:
+    image: nats:alpine
+    ports:
+      - "4222:4222"
+      - "8222:8222" # Management port
+
+volumes:
+  portal_data:

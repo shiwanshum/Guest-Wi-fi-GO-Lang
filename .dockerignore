@@ -1,0 +1,6 @@
+.git
+guest-portal
+guest-wifi.db
+*.db-journal
+node_modules/
+.DS_Store

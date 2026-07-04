@@ -1,0 +1,4 @@
+guest-portal
+guest-wifi.db
+*.db-journal
+.DS_Store
