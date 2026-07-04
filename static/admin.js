@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     switchSizeSelect.addEventListener('change', (e) => {
         currentSwitchSize = parseInt(e.target.value);
         localStorage.setItem('switchSize', currentSwitchSize);
-        renderSwitchUI();
+        fetchNetworks();
     });
 
     let activeNetworks = [];
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         networksTbody.innerHTML = '';
 
         try {
-            const res = await fetch('/api/admin/networks');
+            const res = await fetch(`/api/admin/networks?switch_id=${currentSwitchSize}`);
             if (res.ok) {
                 activeNetworks = await res.json() || [];
                 netLoading.classList.add('hidden');
@@ -325,12 +325,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const ip_range = document.getElementById('ip-range').value;
         const vip_ips = document.getElementById('vip-ips').value;
         const description = document.getElementById('net-desc').value;
+        const switch_id = currentSwitchSize.toString();
 
         try {
             const res = await fetch('/api/admin/networks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ port_num, port_mode, bandwidth_limit, vlan_id, ip_range, vip_ips, description })
+                body: JSON.stringify({ switch_id, port_num, port_mode, bandwidth_limit, vlan_id, ip_range, vip_ips, description })
             });
 
             if (res.ok) {

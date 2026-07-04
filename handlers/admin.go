@@ -31,7 +31,12 @@ func GetNetworksHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	networks, err := models.GetAllNetworks()
+	switchID := r.URL.Query().Get("switch_id")
+	if switchID == "" {
+		switchID = "24" // default
+	}
+
+	networks, err := models.GetAllNetworks(switchID)
 	if err != nil {
 		http.Error(w, "Failed to retrieve networks", http.StatusInternalServerError)
 		return
@@ -52,10 +57,14 @@ func CreateNetworkHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
+	
+	if net.SwitchID == "" {
+		net.SwitchID = "24"
+	}
 
 	// Backend Validation Crosscheck for Network Inputs
-	if net.PortNum < 1 || net.PortNum > 24 {
-		http.Error(w, "Port Number must be between 1 and 24", http.StatusBadRequest)
+	if net.PortNum < 1 || net.PortNum > 48 {
+		http.Error(w, "Port Number must be between 1 and 48", http.StatusBadRequest)
 		return
 	}
 

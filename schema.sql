@@ -20,12 +20,14 @@ CREATE TABLE IF NOT EXISTS guest_sessions (
 
 CREATE TABLE IF NOT EXISTS networks (
     id SERIAL PRIMARY KEY,
-    port_num INTEGER NOT NULL UNIQUE,
+    switch_id TEXT NOT NULL DEFAULT '24',
+    port_num INTEGER NOT NULL,
     port_mode TEXT NOT NULL DEFAULT 'access',
     bandwidth_limit INTEGER DEFAULT 0,
     vip_ips TEXT,
     vlan_id INTEGER NOT NULL,
     ip_range TEXT NOT NULL,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(switch_id, port_num)
 );
