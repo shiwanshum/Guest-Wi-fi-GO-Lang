@@ -95,12 +95,20 @@
 
         <!-- Virtual Switch View -->
         <div id="network-view" class="hidden">
-            <div class="stats-row">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="color: var(--text-muted); font-size: 1rem; font-weight: 500;">Hardware Management</h3>
+                    <select id="switch-size-select" style="padding: 8px 16px; border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: var(--text-main); border: 1px solid var(--border); outline: none; font-size: 0.9rem;">
+                        <option value="8">8-Port Switch</option>
+                        <option value="16">16-Port Switch</option>
+                        <option value="24" selected>24-Port Switch</option>
+                        <option value="48">48-Port Switch</option>
+                    </select>
+                </div>
                 <div class="hardware-switch-container">
                     <div class="hardware-switch">
                         <div class="switch-left">
                             <div class="switch-logo">SYS-CORE</div>
-                            <div class="switch-model">Virtual Switch 24G</div>
+                            <div class="switch-model" id="switch-model-label">Virtual Switch 24G</div>
                         </div>
                         <div class="ports-grid" id="switch-ports">
                             <!-- 24 ports injected via JS -->
@@ -169,6 +177,7 @@
                             <th>VLAN ID</th>
                             <th>IP Range</th>
                             <th>Speed Limit</th>
+                            <th>VIP IPs</th>
                             <th>Status</th>
                         </tr>
                     </thead>

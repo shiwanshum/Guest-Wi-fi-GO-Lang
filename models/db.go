@@ -3,64 +3,32 @@ package models
 import (
 	"database/sql"
 	"log"
+	"time"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
 
-func InitDB(filepath string) {
+func InitDB(dsn string) {
 	var err error
-	DB, err = sql.Open("sqlite3", filepath)
+	DB, err = sql.Open("postgres", dsn)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error connecting to database: ", err)
 	}
 
-	_, err = DB.Exec(`
-		PRAGMA journal_mode = WAL;
-		PRAGMA synchronous = NORMAL;
-		PRAGMA foreign_keys = ON;
-	`)
-	if err != nil {
-		log.Fatalf("Error enabling WAL mode: %v", err)
+	for i := 0; i < 10; i++ {
+		err = DB.Ping()
+		if err == nil {
+			break
+		}
+		log.Printf("Waiting for postgres... (%v)", err)
+		time.Sleep(2 * time.Second)
 	}
 
-	createTablesQuery := `
-	CREATE TABLE IF NOT EXISTS guest_sessions (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT,
-		email TEXT,
-		mobile TEXT,
-		company TEXT,
-		purpose TEXT,
-		otp TEXT,
-		is_verified BOOLEAN DEFAULT FALSE,
-		mac_address TEXT,
-		ip_address TEXT,
-		device TEXT,
-		os TEXT,
-		browser TEXT,
-		login_time DATETIME,
-		logout_time DATETIME,
-		data_download INTEGER DEFAULT 0,
-		data_upload INTEGER DEFAULT 0
-	);
-
-	CREATE TABLE IF NOT EXISTS networks (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		port_num INTEGER NOT NULL UNIQUE,
-		port_mode TEXT NOT NULL DEFAULT 'access',
-		bandwidth_limit INTEGER DEFAULT 0,
-		vip_ips TEXT,
-		vlan_id INTEGER NOT NULL,
-		ip_range TEXT NOT NULL,
-		description TEXT,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-	);
-	`
-	_, err = DB.Exec(createTablesQuery)
 	if err != nil {
-		log.Fatalf("Error creating tables: %v", err)
+		log.Fatal("Error pinging database after retries: ", err)
 	}
+
 	log.Println("Database initialized successfully.")
 }

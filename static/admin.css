@@ -477,13 +477,18 @@ tbody tr:hover {
 .ports-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
     grid-template-rows: repeat(2, auto);
     gap: 12px 8px;
     padding: 0 24px;
     border-left: 2px solid #333;
     border-right: 2px solid #333;
+    min-width: 0;
 }
+
+.ports-grid[data-size="8"] { grid-template-columns: repeat(4, 1fr); }
+.ports-grid[data-size="16"] { grid-template-columns: repeat(8, 1fr); }
+.ports-grid[data-size="24"] { grid-template-columns: repeat(12, 1fr); }
+.ports-grid[data-size="48"] { grid-template-columns: repeat(24, 1fr); }
 
 .port-slot {
     display: flex;
@@ -491,6 +496,7 @@ tbody tr:hover {
     align-items: center;
     cursor: pointer;
     transition: transform 0.2s;
+    position: relative;
 }
 
 .port-slot:hover {
@@ -511,6 +517,28 @@ tbody tr:hover {
 .port-slot.bottom-row .port-label {
     margin-bottom: 0;
     margin-top: 4px;
+}
+
+/* Persistent Port Status Badge */
+.port-status-badge {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: #fff;
+    background: #4CAF50;
+    padding: 1px 4px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    white-space: nowrap;
+    z-index: 5;
+    pointer-events: none;
+}
+.port-slot.bottom-row .port-status-badge {
+    bottom: auto;
+    top: -18px;
 }
 
 .rj45 {
@@ -536,34 +564,58 @@ tbody tr:hover {
 }
 
 /* LED Indicator inside port */
-.port-led {
-    width: 6px;
-    height: 6px;
-    background: #333;
-    border-radius: 50%;
+.port-leds {
     position: absolute;
-    top: -8px;
+    top: -10px;
+    display: flex;
+    gap: 3px;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.port-slot.bottom-row .port-leds {
+    top: auto;
+    bottom: -10px;
+}
+
+.port-led {
+    width: 4px;
+    height: 4px;
+    background: #333;
+    border-radius: 50%;
     box-shadow: 0 0 2px rgba(0,0,0,0.8);
     transition: all 0.3s;
 }
-.port-slot.bottom-row .port-led {
-    top: auto;
-    bottom: -8px;
-}
 
-.port-slot.tx-rx-active .port-led {
+/* Base Active Status */
+.port-slot.tx-rx-active .lnk-led {
     background: #4CAF50;
-    box-shadow: 0 0 8px #4CAF50, inset 0 0 4px #fff;
-    animation: tx-rx-blink 0.3s infinite;
+    box-shadow: 0 0 6px #4CAF50;
 }
 
-@keyframes tx-rx-blink {
+/* Transmit (TX) Blinking */
+.port-slot.tx-rx-active .tx-led {
+    background: #4CAF50;
+    box-shadow: 0 0 6px #4CAF50;
+    animation: tx-blink 0.2s infinite;
+    animation-delay: 0.1s;
+}
+
+/* Receive (RX) Blinking - Amber */
+.port-slot.tx-rx-active .rx-led {
+    background: #FFC107;
+    box-shadow: 0 0 6px #FFC107;
+    animation: rx-blink 0.3s infinite;
+}
+
+@keyframes tx-blink {
     0%, 100% { opacity: 1; }
-    25% { opacity: 0.3; }
-    50% { opacity: 0.8; }
-    75% { opacity: 0.2; }
+    50% { opacity: 0.2; }
+}
+
+@keyframes rx-blink {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
 }
 
 .port-slot.selected .rj45 {

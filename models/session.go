@@ -25,22 +25,17 @@ type GuestSession struct {
 }
 
 func CreateSession(session *GuestSession) error {
-	query := `INSERT INTO guest_sessions (name, email, mobile, company, purpose, otp) VALUES (?, ?, ?, ?, ?, ?)`
-	res, err := DB.Exec(query, session.Name, session.Email, session.Mobile, session.Company, session.Purpose, session.OTP)
+	query := `INSERT INTO guest_sessions (name, email, mobile, company, purpose, otp) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
+	err := DB.QueryRow(query, session.Name, session.Email, session.Mobile, session.Company, session.Purpose, session.OTP).Scan(&session.ID)
 	if err != nil {
 		return err
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-	session.ID = int(id)
 	return nil
 }
 
 func VerifySessionOTP(mobile, otp string, sessionData *GuestSession) (*GuestSession, error) {
 	// Simple lookup based on mobile and OTP
-	query := `SELECT id, name, email, mobile, company, purpose, otp, is_verified FROM guest_sessions WHERE mobile = ? AND otp = ? AND is_verified = FALSE ORDER BY id DESC LIMIT 1`
+	query := `SELECT id, name, email, mobile, company, purpose, otp, is_verified FROM guest_sessions WHERE mobile = $1 AND otp = $2 AND is_verified = FALSE ORDER BY id DESC LIMIT 1`
 	row := DB.QueryRow(query, mobile, otp)
 
 	var s GuestSession
@@ -53,8 +48,8 @@ func VerifySessionOTP(mobile, otp string, sessionData *GuestSession) (*GuestSess
 	now := time.Now()
 	updateQuery := `
 		UPDATE guest_sessions 
-		SET is_verified = TRUE, mac_address = ?, ip_address = ?, device = ?, os = ?, browser = ?, login_time = ?
-		WHERE id = ?
+		SET is_verified = TRUE, mac_address = $1, ip_address = $2, device = $3, os = $4, browser = $5, login_time = $6
+		WHERE id = $7
 	`
 	_, err = DB.Exec(updateQuery, sessionData.MACAddress, sessionData.IPAddress, sessionData.Device, sessionData.OS, sessionData.Browser, now, s.ID)
 	if err != nil {

@@ -37,16 +37,11 @@ func GetAllNetworks() ([]Network, error) {
 }
 
 func CreateNetwork(net *Network) error {
-	query := `INSERT INTO networks (port_num, port_mode, bandwidth_limit, vip_ips, vlan_id, ip_range, description) VALUES (?, ?, ?, ?, ?, ?, ?)`
-	res, err := DB.Exec(query, net.PortNum, net.PortMode, net.BandwidthLimit, net.VIPIPs, net.VLANID, net.IPRange, net.Description)
+	query := `INSERT INTO networks (port_num, port_mode, bandwidth_limit, vip_ips, vlan_id, ip_range, description) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`
+	err := DB.QueryRow(query, net.PortNum, net.PortMode, net.BandwidthLimit, net.VIPIPs, net.VLANID, net.IPRange, net.Description).Scan(&net.ID)
 	if err != nil {
 		return err
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-	net.ID = int(id)
 	
 	now := time.Now()
 	net.CreatedAt = &now

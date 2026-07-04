@@ -171,20 +171,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const closePanelBtn = document.getElementById('close-panel-btn');
     const configPortTitle = document.getElementById('config-port-title');
     const configPortNum = document.getElementById('config-port-num');
+    const switchModelLabel = document.getElementById('switch-model-label');
+    const switchSizeSelect = document.getElementById('switch-size-select');
     
-    // Generate 24 ports for the UI
+    // Default to 24 ports, but allow selection
+    let currentSwitchSize = parseInt(localStorage.getItem('switchSize')) || 24;
+    switchSizeSelect.value = currentSwitchSize;
+
+    switchSizeSelect.addEventListener('change', (e) => {
+        currentSwitchSize = parseInt(e.target.value);
+        localStorage.setItem('switchSize', currentSwitchSize);
+        renderSwitchUI();
+    });
+
     let activeNetworks = [];
     
     function renderSwitchUI() {
         switchPortsContainer.innerHTML = '';
-        for (let i = 1; i <= 24; i++) {
-            const isBottomRow = i > 12;
+        switchPortsContainer.dataset.size = currentSwitchSize;
+        switchModelLabel.textContent = `Virtual Switch ${currentSwitchSize}G`;
+
+        const colsPerRow = currentSwitchSize / 2;
+        
+        for (let i = 1; i <= currentSwitchSize; i++) {
+            const isBottomRow = i > colsPerRow;
             const slot = document.createElement('div');
             slot.className = `port-slot ${isBottomRow ? 'bottom-row' : ''}`;
             slot.dataset.port = i;
             
             slot.innerHTML = `
-                <div class="port-led"></div>
+                <div class="port-leds">
+                    <div class="port-led lnk-led" title="Link/Power"></div>
+                    <div class="port-led tx-led" title="Transmit"></div>
+                    <div class="port-led rx-led" title="Receive"></div>
+                </div>
                 <div class="rj45"></div>
                 <div class="port-label">${i}</div>
             `;
@@ -199,9 +219,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.port-slot').forEach(slot => {
             const portNum = parseInt(slot.dataset.port);
             const net = activeNetworks.find(n => n.port_num === portNum);
+            
+            // Remove existing badge if any
+            const existingBadge = slot.querySelector('.port-status-badge');
+            if (existingBadge) existingBadge.remove();
+
             if (net) {
                 slot.classList.add('active', 'tx-rx-active');
                 slot.title = `VLAN: ${net.vlan_id} | Mode: ${net.port_mode} | Limit: ${net.bandwidth_limit > 0 ? net.bandwidth_limit + 'Mbps' : 'Unlimited'}`;
+                
+                // Add persistent status badge
+                const badge = document.createElement('div');
+                badge.className = 'port-status-badge';
+                badge.textContent = `V${net.vlan_id}-${net.port_mode === 'access' ? 'ACC' : 'TRK'}`;
+                slot.appendChild(badge);
             } else {
                 slot.classList.remove('active', 'tx-rx-active');
                 slot.title = `Port ${portNum} - Empty`;
@@ -259,13 +290,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     activeNetworks.forEach(net => {
                         const tr = document.createElement('tr');
-                        const created = new Date(net.created_at).toLocaleString();
+                        let vipHtml = '-';
+                        if (net.vip_ips) {
+                            vipHtml = net.vip_ips.split(',').map(ip => `<a href="#" class="vip-link" style="color:var(--primary); text-decoration:underline;" data-ip="${ip.trim()}">${ip.trim()}</a>`).join(', ');
+                        }
                         tr.innerHTML = `
                             <td><strong>P${net.port_num}</strong></td>
                             <td><span class="status-badge" style="background:#333; color:#aaa;">${net.port_mode.toUpperCase()}</span></td>
                             <td><strong>${net.vlan_id}</strong></td>
                             <td>${net.ip_range}</td>
                             <td>${net.bandwidth_limit > 0 ? net.bandwidth_limit + ' Mbps' : 'Unlimited'}</td>
+                            <td>${vipHtml}</td>
                             <td><span class="status-badge status-online">Active</span></td>
                         `;
                         networksTbody.appendChild(tr);
@@ -318,4 +353,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial fetch
     fetchSessions();
     renderSwitchUI();
+
+    // VIP Link global listener
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('vip-link')) {
+            e.preventDefault();
+            const ip = e.target.getAttribute('data-ip');
+            
+            // Switch to Sessions Tab
+            document.getElementById('nav-sessions').click();
+            
+            // Wait for DOM then search
+            setTimeout(() => {
+                searchInput.value = ip;
+                searchInput.dispatchEvent(new Event('input'));
+                
+                const session = sessionsData.find(s => s.ip_address === ip && s.is_verified);
+                if (session) {
+                    showModal(session);
+                } else {
+                    alert('No active session currently found for VIP IP: ' + ip);
+                }
+            }, 100);
+        }
+    });
 });

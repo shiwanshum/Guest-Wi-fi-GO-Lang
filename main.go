@@ -11,8 +11,11 @@ import (
 )
 
 func main() {
-	// Initialize Database (store in /data volume to avoid shadowing /app)
-	models.InitDB("/data/guest-wifi.db")
+	dbDSN := os.Getenv("DB_DSN")
+	if dbDSN == "" {
+		dbDSN = "host=localhost user=admin password=admin dbname=guestwifi port=5432 sslmode=disable"
+	}
+	models.InitDB(dbDSN)
 
 	// Initialize NATS & Worker
 	services.InitNATS()
