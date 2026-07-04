@@ -54,6 +54,21 @@ func CreateNetworkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Backend Validation Crosscheck for Network Inputs
+	if net.PortNum < 1 || net.PortNum > 24 {
+		http.Error(w, "Port Number must be between 1 and 24", http.StatusBadRequest)
+		return
+	}
+
+	if net.PortMode != "access" && net.PortMode != "trunk" {
+		http.Error(w, "Port Mode must be either 'access' or 'trunk'", http.StatusBadRequest)
+		return
+	}
+
+	if net.BandwidthLimit < 0 {
+		http.Error(w, "Bandwidth limit cannot be negative", http.StatusBadRequest)
+		return
+	}
+
 	if net.VLANID < 1 || net.VLANID > 4095 {
 		http.Error(w, "VLAN ID must be between 1 and 4095", http.StatusBadRequest)
 		return

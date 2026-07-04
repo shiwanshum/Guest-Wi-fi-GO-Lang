@@ -198,13 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateSwitchLEDs() {
         document.querySelectorAll('.port-slot').forEach(slot => {
             const portNum = parseInt(slot.dataset.port);
-            // Just simulating active ports based on existing VLAN configurations
-            // We map VLAN config index to port numbers for visual effect
-            if (activeNetworks[portNum - 1]) {
-                slot.classList.add('active');
-                slot.title = `VLAN: ${activeNetworks[portNum - 1].vlan_id}`;
+            const net = activeNetworks.find(n => n.port_num === portNum);
+            if (net) {
+                slot.classList.add('active', 'tx-rx-active');
+                slot.title = `VLAN: ${net.vlan_id} | Mode: ${net.port_mode} | Limit: ${net.bandwidth_limit > 0 ? net.bandwidth_limit + 'Mbps' : 'Unlimited'}`;
             } else {
-                slot.classList.remove('active');
+                slot.classList.remove('active', 'tx-rx-active');
                 slot.title = `Port ${portNum} - Empty`;
             }
         });
@@ -219,11 +218,14 @@ document.addEventListener('DOMContentLoaded', () => {
         configPortNum.value = portNum;
         
         // If this port already has a mapped config, populate it
-        const existingNet = activeNetworks[portNum - 1];
+        const existingNet = activeNetworks.find(n => n.port_num === portNum);
         if (existingNet) {
+            document.getElementById('port-mode').value = existingNet.port_mode;
+            document.getElementById('bandwidth-limit').value = existingNet.bandwidth_limit;
             document.getElementById('vlan-id').value = existingNet.vlan_id;
             document.getElementById('ip-range').value = existingNet.ip_range;
-            document.getElementById('net-desc').value = existingNet.description;
+            document.getElementById('vip-ips').value = existingNet.vip_ips || '';
+            document.getElementById('net-desc').value = existingNet.description || '';
             addNetBtn.textContent = 'Update Configuration';
         } else {
             netForm.reset();
@@ -259,10 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         const tr = document.createElement('tr');
                         const created = new Date(net.created_at).toLocaleString();
                         tr.innerHTML = `
+                            <td><strong>P${net.port_num}</strong></td>
+                            <td><span class="status-badge" style="background:#333; color:#aaa;">${net.port_mode.toUpperCase()}</span></td>
                             <td><strong>${net.vlan_id}</strong></td>
                             <td>${net.ip_range}</td>
-                            <td>${net.description || '-'}</td>
-                            <td>${created}</td>
+                            <td>${net.bandwidth_limit > 0 ? net.bandwidth_limit + ' Mbps' : 'Unlimited'}</td>
                             <td><span class="status-badge status-online">Active</span></td>
                         `;
                         networksTbody.appendChild(tr);
@@ -280,15 +283,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalText = addNetBtn.textContent;
         addNetBtn.textContent = 'Injecting...';
 
+        const port_num = parseInt(document.getElementById('config-port-num').value);
+        const port_mode = document.getElementById('port-mode').value;
+        const bandwidth_limit = parseInt(document.getElementById('bandwidth-limit').value);
         const vlan_id = parseInt(document.getElementById('vlan-id').value);
         const ip_range = document.getElementById('ip-range').value;
+        const vip_ips = document.getElementById('vip-ips').value;
         const description = document.getElementById('net-desc').value;
 
         try {
             const res = await fetch('/api/admin/networks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ vlan_id, ip_range, description })
+                body: JSON.stringify({ port_num, port_mode, bandwidth_limit, vlan_id, ip_range, vip_ips, description })
             });
 
             if (res.ok) {

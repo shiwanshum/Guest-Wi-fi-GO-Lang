@@ -553,9 +553,17 @@ tbody tr:hover {
     bottom: -8px;
 }
 
-.port-slot.active .port-led {
+.port-slot.tx-rx-active .port-led {
     background: #4CAF50;
     box-shadow: 0 0 8px #4CAF50, inset 0 0 4px #fff;
+    animation: tx-rx-blink 0.3s infinite;
+}
+
+@keyframes tx-rx-blink {
+    0%, 100% { opacity: 1; }
+    25% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+    75% { opacity: 0.2; }
 }
 
 .port-slot.selected .rj45 {

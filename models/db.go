@@ -48,6 +48,10 @@ func InitDB(filepath string) {
 
 	CREATE TABLE IF NOT EXISTS networks (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		port_num INTEGER NOT NULL UNIQUE,
+		port_mode TEXT NOT NULL DEFAULT 'access',
+		bandwidth_limit INTEGER DEFAULT 0,
+		vip_ips TEXT,
 		vlan_id INTEGER NOT NULL,
 		ip_range TEXT NOT NULL,
 		description TEXT,

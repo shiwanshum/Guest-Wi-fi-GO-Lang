@@ -115,13 +115,27 @@
                 </div>
 
                 <!-- Sliding Panel for Port Config -->
-                <div id="port-config-panel" class="side-panel hidden">
+                <div id="port-config-panel" class="side-panel">
                     <div class="panel-header">
                         <h2 id="config-port-title">Configure Port</h2>
                         <button class="close-btn" id="close-panel-btn">&times;</button>
                     </div>
                     <form id="network-form" class="panel-form">
                         <input type="hidden" id="config-port-num">
+                        
+                        <div class="input-group">
+                            <label>Port Mode</label>
+                            <select id="port-mode" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:8px; background:rgba(0,0,0,0.2); color:var(--text-main); outline:none;">
+                                <option value="access">Access (Private)</option>
+                                <option value="trunk">Trunk</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Speed Limit (Mbps) <span style="font-size: 0.75rem; color:#888;">0 for unlimited</span></label>
+                            <input type="number" id="bandwidth-limit" required min="0" value="0">
+                        </div>
+
                         <div class="input-group">
                             <label>VLAN ID</label>
                             <input type="number" id="vlan-id" required min="1" max="4095" placeholder="e.g., 20" title="VLAN ID must be between 1 and 4095">
@@ -130,6 +144,12 @@
                             <label>IP Range (CIDR)</label>
                             <input type="text" id="ip-range" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$" placeholder="192.168.20.0/24" title="Must be a valid IPv4 CIDR (e.g. 192.168.20.0/24)">
                         </div>
+                        
+                        <div class="input-group">
+                            <label>VIP IPs (Comma separated)</label>
+                            <input type="text" id="vip-ips" placeholder="192.168.20.10, 192.168.20.15">
+                        </div>
+
                         <div class="input-group">
                             <label>Description (Optional)</label>
                             <input type="text" id="net-desc" maxlength="255" placeholder="Guest Network Zone B">
@@ -144,10 +164,11 @@
                 <table id="networks-table">
                     <thead>
                         <tr>
+                            <th>Port</th>
+                            <th>Mode</th>
                             <th>VLAN ID</th>
                             <th>IP Range</th>
-                            <th>Description</th>
-                            <th>Created At</th>
+                            <th>Speed Limit</th>
                             <th>Status</th>
                         </tr>
                     </thead>
