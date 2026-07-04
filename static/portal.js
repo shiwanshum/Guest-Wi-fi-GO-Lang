@@ -43,7 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
         sendOtpBtn.disabled = true;
 
         const name = document.getElementById('name').value;
-        const mobile = document.getElementById('mobile').value;
+        const email = document.getElementById('email').value;
+        const countryCode = document.getElementById('country-code').value;
+        const rawMobile = document.getElementById('mobile').value;
+        const mobile = countryCode + "-" + rawMobile;
         const company = document.getElementById('company').value;
         const purpose = document.getElementById('purpose').value;
 
@@ -51,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, mobile, company, purpose })
+                body: JSON.stringify({ name, email, mobile, company, purpose })
             });
 
             if (res.ok) {

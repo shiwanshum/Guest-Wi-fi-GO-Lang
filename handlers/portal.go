@@ -15,6 +15,7 @@ import (
 
 type RegisterRequest struct {
 	Name    string `json:"name"`
+	Email   string `json:"email"`
 	Mobile  string `json:"mobile"`
 	Company string `json:"company"`
 	Purpose string `json:"purpose"`
@@ -53,6 +54,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	session := &models.GuestSession{
 		Name:    req.Name,
+		Email:   req.Email,
 		Mobile:  req.Mobile,
 		Company: req.Company,
 		Purpose: req.Purpose,

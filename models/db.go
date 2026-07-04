@@ -29,6 +29,7 @@ func InitDB(filepath string) {
 	CREATE TABLE IF NOT EXISTS guest_sessions (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT,
+		email TEXT,
 		mobile TEXT,
 		company TEXT,
 		purpose TEXT,
