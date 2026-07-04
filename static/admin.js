@@ -43,10 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const navSessions = document.getElementById('nav-sessions');
     const navNetwork = document.getElementById('nav-network');
+    const navEnterprise = document.getElementById('nav-enterprise');
     const navSettings = document.getElementById('nav-settings');
     const navLogs = document.getElementById('nav-logs');
     const sessionsView = document.getElementById('sessions-view');
     const networkView = document.getElementById('network-view');
+    const enterpriseView = document.getElementById('enterprise-view');
     const settingsView = document.getElementById('settings-view');
     const logsView = document.getElementById('logs-view');
     const sidebarName = document.getElementById('sidebar-name');
@@ -371,9 +373,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // NAVIGATION
     // =============================================
     function switchView(activeNav, activeView) {
-        [navSessions, navNetwork, navSettings, navLogs].forEach(n => n.classList.remove('active'));
+        [navSessions, navNetwork, navEnterprise, navSettings, navLogs].forEach(n => n.classList.remove('active'));
         activeNav.classList.add('active');
-        [sessionsView, networkView, settingsView, logsView].forEach(v => v.classList.add('hidden'));
+        [sessionsView, networkView, enterpriseView, settingsView, logsView].forEach(v => v.classList.add('hidden'));
         activeView.classList.remove('hidden');
     }
 
@@ -387,6 +389,16 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         switchView(navNetwork, networkView);
         fetchNetworks();
+    });
+
+    navEnterprise.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchView(navEnterprise, enterpriseView);
+        // Reset to grid view if config view was open
+        document.querySelectorAll('.enterprise-header, .enterprise-grid').forEach(el => {
+            el.classList.remove('hidden');
+        });
+        entConfigView.classList.add('hidden');
     });
 
     navSettings.addEventListener('click', (e) => {
@@ -723,6 +735,547 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             addNetBtn.disabled = false;
             addNetBtn.textContent = originalText;
+        }
+    });
+
+    // =============================================
+    // ENTERPRISE CONFIG FULL PAGE
+    // =============================================
+    const entConfigView = document.getElementById('ent-config-view');
+    const entTitle = document.getElementById('ent-config-title');
+    const entBody = document.getElementById('ent-config-body');
+    const backToEntGrid = document.getElementById('back-to-ent-grid');
+
+    const configPanels = {
+        l2: {
+            title: 'L2 Switching Configuration',
+            icon: 'ent-icon-l2',
+            fields: [
+                { label: 'VLAN ID', type: 'number', placeholder: '1-4095', value: '100' },
+                { label: 'Port Mode', type: 'select', options: ['Access', 'Trunk', 'Hybrid'] },
+                { label: 'Allowed VLANs', type: 'text', placeholder: '100,200,300', value: '100' },
+                { label: 'STP Mode', type: 'select', options: ['STP', 'RSTP', 'MSTP', 'Disabled'] },
+                { label: 'LACP', type: 'select', options: ['Active', 'Passive', 'Disabled'] },
+                { label: 'MTU', type: 'number', placeholder: '1500', value: '1500' },
+                { label: 'Port Mirroring', type: 'select', options: ['Disabled', 'Ingress', 'Egress', 'Both'] }
+            ]
+        },
+        routing: {
+            title: 'BGP / OSPF / VRRP Configuration',
+            icon: 'ent-icon-routing',
+            fields: [
+                { label: 'Protocol', type: 'select', options: ['BGP', 'OSPF', 'VRRP', 'Static'] },
+                { label: 'AS Number', type: 'number', placeholder: '65000', value: '65000' },
+                { label: 'Router ID', type: 'text', placeholder: '10.0.0.1', value: '10.0.0.1' },
+                { label: 'Network', type: 'text', placeholder: '192.168.1.0/24', value: '192.168.1.0/24' },
+                { label: 'Neighbor', type: 'text', placeholder: '10.0.0.2' },
+                { label: 'ECMP Paths', type: 'number', placeholder: '4', value: '4' },
+                { label: 'NAT', type: 'select', options: ['Disabled', 'Source NAT', 'Destination NAT', 'Masquerade'] }
+            ]
+        },
+        lb: {
+            title: 'L4/L7 Load Balancer Configuration',
+            icon: 'ent-icon-lb',
+            fields: [
+                { label: 'Mode', type: 'select', options: ['TCP', 'UDP', 'HTTP', 'HTTPS'] },
+                { label: 'Frontend Port', type: 'number', placeholder: '80', value: '80' },
+                { label: 'Backend Servers', type: 'text', placeholder: '10.0.0.10:8080,10.0.0.11:8080' },
+                { label: 'Algorithm', type: 'select', options: ['Round Robin', 'Least Connections', 'Source IP Hash', 'URI Hash'] },
+                { label: 'Health Check', type: 'select', options: ['TCP', 'HTTP', 'HTTPS', 'Disabled'] },
+                { label: 'Session Persistence', type: 'select', options: ['None', 'Source IP', 'Cookie', 'Cookie Insert'] },
+                { label: 'TLS Termination', type: 'select', options: ['Disabled', 'Enabled - ACME', 'Enabled - Upload'] }
+            ]
+        },
+        ssl: {
+            title: 'ACME Certificate Authority — Core Engine',
+            render: true
+        },
+        k8s: {
+            title: 'Kubernetes LoadBalancer Configuration',
+            icon: 'ent-icon-k8s',
+            fields: [
+                { label: 'Kubeconfig', type: 'select', options: ['In-Cluster', 'Upload Config', 'Manual'] },
+                { label: 'API Server', type: 'text', placeholder: 'https://kubernetes.default.svc' },
+                { label: 'IP Pool Name', type: 'text', placeholder: 'production-pool', value: 'production-pool' },
+                { label: 'IP Pool Range', type: 'text', placeholder: '203.0.113.10-203.0.113.50' },
+                { label: 'Service Type', type: 'select', options: ['LoadBalancer', 'ClusterIP + LB', 'Ingress'] },
+                { label: 'Namespace Filter', type: 'text', placeholder: 'default' },
+                { label: 'Announce Method', type: 'select', options: ['ARP', 'BGP', 'L2 Announce'] }
+            ]
+        },
+        ipam: {
+            title: 'IP Address Management Configuration',
+            icon: 'ent-icon-ipam',
+            fields: [
+                { label: 'Pool Name', type: 'text', placeholder: 'pool-name', value: 'public-pool' },
+                { label: 'Network CIDR', type: 'text', placeholder: '10.0.0.0/16', value: '10.0.0.0/16' },
+                { label: 'Gateway IP', type: 'text', placeholder: '10.0.0.1', value: '10.0.0.1' },
+                { label: 'Pool Type', type: 'select', options: ['Public', 'Private', 'Floating', 'VIP'] },
+                { label: 'DHCP Range', type: 'text', placeholder: '10.0.0.100-10.0.0.200' },
+                { label: 'Reserved IPs', type: 'text', placeholder: '10.0.0.1,10.0.0.2' },
+                { label: 'IP Version', type: 'select', options: ['IPv4', 'IPv6', 'Dual Stack'] }
+            ]
+        },
+        qos: {
+            title: 'Bandwidth Control Configuration',
+            icon: 'ent-icon-bw',
+            fields: [
+                { label: 'Scope', type: 'select', options: ['Per-Port', 'Per-VLAN', 'Per-IP', 'Per-Service'] },
+                { label: 'Ingress Limit', type: 'number', placeholder: '1000', value: '1000' },
+                { label: 'Egress Limit', type: 'number', placeholder: '1000', value: '1000' },
+                { label: 'Unit', type: 'select', options: ['Mbps', 'Kbps', 'Gbps'] },
+                { label: 'Burst Size', type: 'number', placeholder: '100', value: '100' },
+                { label: 'Traffic Shaping', type: 'select', options: ['HTB', 'TBF', 'HFSC', 'Disabled'] },
+                { label: 'Priority', type: 'select', options: ['Low', 'Normal', 'High', 'Critical'] }
+            ]
+        },
+        ha: {
+            title: 'HA Clustering Configuration',
+            icon: 'ent-icon-ha',
+            fields: [
+                { label: 'Cluster Mode', type: 'select', options: ['Active/Standby', 'Active/Active', 'Master/Slave'] },
+                { label: 'Node Name', type: 'text', placeholder: 'node-1', value: 'node-1' },
+                { label: 'Peer Address', type: 'text', placeholder: '10.0.0.2' },
+                { label: 'VRRP Group ID', type: 'number', placeholder: '1', value: '1' },
+                { label: 'Floating VIP', type: 'text', placeholder: '10.0.0.100', value: '10.0.0.100' },
+                { label: 'Sync Protocol', type: 'select', options: ['etcd', 'Consul', 'Raft', 'Manual'] },
+                { label: 'Health Check Interval', type: 'number', placeholder: '5', value: '5' }
+            ]
+        }
+    };
+
+    function openEntConfigView(configKey) {
+        const config = configPanels[configKey];
+        if (!config) return;
+
+        entTitle.textContent = config.title;
+
+        let html = '';
+
+        if (config.render) {
+            // Custom rich render for ACME SSL core
+            html = acmeCoreHTML();
+        } else {
+            config.fields.forEach(f => {
+                const fieldId = 'ent-field-' + configKey + '-' + f.label.toLowerCase().replace(/\s+/g, '-');
+                html += `<div class="input-group">`;
+                html += `<label for="${fieldId}">${f.label}</label>`;
+                if (f.type === 'select') {
+                    html += `<select id="${fieldId}" class="ent-field">`;
+                    f.options.forEach(opt => {
+                        html += `<option value="${opt}">${opt}</option>`;
+                    });
+                    html += `</select>`;
+                } else {
+                    html += `<input id="${fieldId}" type="${f.type}" class="ent-field" placeholder="${f.placeholder || ''}" value="${f.value || ''}">`;
+                }
+                html += `</div>`;
+            });
+
+            html += `
+                <div style="margin-top:12px; padding-top:20px; border-top:1px solid var(--border);">
+                    <button class="btn btn-primary ent-apply-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Apply Configuration
+                    </button>
+                </div>
+            `;
+        }
+
+        entBody.innerHTML = html;
+
+        // Show full-page config, hide grid
+        document.querySelectorAll('.enterprise-header, .enterprise-grid').forEach(el => {
+            el.classList.add('hidden');
+        });
+        entConfigView.classList.remove('hidden');
+
+        if (configKey === 'ssl') {
+            initACMETabs();
+        }
+    }
+
+    // Current selected domain for cert issuance
+    let acmeSelectedDomain = 'example.com';
+
+    function acmeCoreHTML() {
+        return `
+            <div class="acme-container">
+                <!-- STEP 1: Domain Creation & Certificate Profile -->
+                <div class="acme-section acme-section-highlight">
+                    <div class="acme-section-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        New Certificate — Domain Setup
+                        <span class="status-badge status-online" style="margin-left:auto;"><span class="status-dot"></span>Let's Encrypt</span>
+                    </div>
+                    <div class="step-indicator">
+                        <span class="step active">1. Domain</span>
+                        <span class="step-sep">→</span>
+                        <span class="step">2. Validation</span>
+                        <span class="step-sep">→</span>
+                        <span class="step">3. Issuance</span>
+                        <span class="step-sep">→</span>
+                        <span class="step">4. Active</span>
+                    </div>
+                    <div class="acme-field-row">
+                        <div class="input-group" style="flex:2;">
+                            <label>Common Name (CN)</label>
+                            <input type="text" class="ent-field" id="acme-cn" value="example.com" placeholder="e.g. app.yourdomain.com" style="font-family:monospace;">
+                        </div>
+                        <div class="input-group" style="flex:1;">
+                            <label>Certificate Profile</label>
+                            <select class="ent-field" id="acme-profile">
+                                <option value="server">Server (HTTPS/TLS)</option>
+                                <option value="client">Client (mTLS)</option>
+                                <option value="ssh-user">SSH User (smallstep)</option>
+                                <option value="ssh-host">SSH Host (smallstep)</option>
+                                <option value="code-signing">Code Signing</option>
+                                <option value="custom">Custom Profile</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="acme-field-row">
+                        <div class="input-group" style="flex:1;">
+                            <label>Subject Alternative Names (SANs)</label>
+                            <input type="text" class="ent-field" id="acme-sans" value="*.example.com, api.example.com, www.example.com" placeholder="*.domain.com, api.domain.com">
+                        </div>
+                    </div>
+                    <div class="acme-field-row">
+                        <div class="input-group" style="flex:1;">
+                            <label>Organization (O)</label>
+                            <input type="text" class="ent-field" id="acme-org" value="Acme Corp" placeholder="Your Organization">
+                        </div>
+                        <div class="input-group" style="flex:1;">
+                            <label>Country (C)</label>
+                            <select class="ent-field" id="acme-country">
+                                <option value="US">United States (US)</option>
+                                <option value="IN" selected>India (IN)</option>
+                                <option value="GB">United Kingdom (GB)</option>
+                                <option value="DE">Germany (DE)</option>
+                                <option value="SG">Singapore (SG)</option>
+                                <option value="JP">Japan (JP)</option>
+                                <option value="AU">Australia (AU)</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex:1;">
+                            <label>Validity (Days)</label>
+                            <input type="number" class="ent-field" id="acme-validity" value="90">
+                        </div>
+                    </div>
+                    <div class="acme-provisioners">
+                        <div class="provisioner-info">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                            <span>Provisioner: <strong>Admin JIT Provisioner</strong> (OIDC-enabled, like smallstep)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Provisioners & Identity (smallstep-like) -->
+                <div class="acme-section">
+                    <div class="acme-section-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Provisioners & Identity (smallstep-compatible)
+                    </div>
+                    <div class="provisioner-grid">
+                        <div class="provisioner-card active">
+                            <div class="prov-icon prov-icon-oidc">OIDC</div>
+                            <div class="prov-info">
+                                <strong>Admin JIT</strong>
+                                <span>OIDC · Google Workspace</span>
+                            </div>
+                            <span class="status-badge status-online"><span class="status-dot"></span>Active</span>
+                        </div>
+                        <div class="provisioner-card">
+                            <div class="prov-icon prov-icon-acme">ACME</div>
+                            <div class="prov-info">
+                                <strong>ACME Agent</strong>
+                                <span>Automated · No OIDC</span>
+                            </div>
+                            <span class="status-badge status-online"><span class="status-dot"></span>Active</span>
+                        </div>
+                        <div class="provisioner-card">
+                            <div class="prov-icon prov-icon-saml">SAML</div>
+                            <div class="prov-info">
+                                <strong>Enterprise SSO</strong>
+                                <span>SAML · Azure AD</span>
+                            </div>
+                            <span class="status-badge status-offline"><span class="status-dot"></span>Inactive</span>
+                        </div>
+                        <div class="provisioner-card">
+                            <div class="prov-icon prov-icon-password">PWD</div>
+                            <div class="prov-info">
+                                <strong>Local Admin</strong>
+                                <span>Password · Offline token</span>
+                            </div>
+                            <span class="status-badge status-online"><span class="status-dot"></span>Active</span>
+                        </div>
+                    </div>
+                    <div class="acme-field-row" style="margin-top:12px;">
+                        <div class="input-group" style="flex:1;">
+                            <label>JWT / OIDC Token (for Admin JIT provisioner)</label>
+                            <input type="text" class="ent-field" value="eyJhbGciOiJSUzI1NiIsImtpZCI6I..." placeholder="Paste JWT or OIDC token">
+                        </div>
+                        <button class="btn btn-outline" style="white-space:nowrap; height:fit-content; align-self:flex-end; padding:12px 16px;">Verify</button>
+                    </div>
+                </div>
+
+                <!-- Domain List with Cert Status -->
+                <div class="acme-section">
+                    <div class="acme-section-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        Managed Certificates
+                        <span class="status-badge status-online" style="margin-left:auto; font-size:0.65rem;">3 Active</span>
+                    </div>
+                    <div class="acme-domain-list">
+                        <div class="acme-domain-item" data-domain="example.com" onclick="acmeSelectedDomain='example.com';document.querySelectorAll('.acme-domain-item').forEach(d=>d.classList.remove('selected'));this.classList.add('selected');">
+                            <div class="domain-cert-status">
+                                <span class="cert-led cert-led-valid"></span>
+                            </div>
+                            <span class="acme-domain-name">example.com</span>
+                            <span class="domain-cert-info">ECDSA P-256 · SHA-256</span>
+                            <span class="status-badge status-online"><span class="status-dot"></span>Valid</span>
+                            <span class="domain-expiry">Exp: 2026-10-02</span>
+                        </div>
+                        <div class="acme-domain-item selected" data-domain="*.example.com" onclick="acmeSelectedDomain='*.example.com';document.querySelectorAll('.acme-domain-item').forEach(d=>d.classList.remove('selected'));this.classList.add('selected');">
+                            <div class="domain-cert-status">
+                                <span class="cert-led cert-led-valid"></span>
+                            </div>
+                            <span class="acme-domain-name">*.example.com</span>
+                            <span class="domain-cert-info">RSA 2048 · SHA-256</span>
+                            <span class="status-badge status-online"><span class="status-dot"></span>Valid</span>
+                            <span class="domain-expiry">Exp: 2026-09-15</span>
+                        </div>
+                        <div class="acme-domain-item" data-domain="api.example.com" onclick="acmeSelectedDomain='api.example.com';document.querySelectorAll('.acme-domain-item').forEach(d=>d.classList.remove('selected'));this.classList.add('selected');">
+                            <div class="domain-cert-status">
+                                <span class="cert-led cert-led-pending"></span>
+                            </div>
+                            <span class="acme-domain-name">api.example.com</span>
+                            <span class="domain-cert-info">—</span>
+                            <span class="status-badge status-offline"><span class="status-dot"></span>Pending</span>
+                            <span class="domain-expiry">—</span>
+                        </div>
+                        <div class="acme-domain-item" onclick="alert('Create new certificate for this domain');">
+                            <div class="domain-cert-status">
+                                <span style="color:var(--text-muted);font-size:1.2rem;">+</span>
+                            </div>
+                            <span class="acme-domain-name" style="color:var(--text-muted);">internal.service.local</span>
+                            <span class="domain-cert-info">—</span>
+                            <span class="status-badge" style="background:rgba(99,102,241,0.15);color:var(--primary);border:1px solid rgba(99,102,241,0.3);">New</span>
+                            <span class="domain-expiry">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate Details Panel -->
+                <div class="acme-section" id="acme-cert-details">
+                    <div class="acme-section-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                        Certificate Details — *.example.com
+                    </div>
+                    <div class="cert-detail-grid">
+                        <div class="cert-detail-item">
+                            <span class="cert-detail-label">Serial Number</span>
+                            <span class="cert-detail-val mono">04:A3:7B:1F:8C:22:D9:45:EB:11:6F:00:3A:98:CC:77</span>
+                        </div>
+                        <div class="cert-detail-item">
+                            <span class="cert-detail-label">Subject</span>
+                            <span class="cert-detail-val mono">CN = *.example.com</span>
+                        </div>
+                        <div class="cert-detail-item">
+                            <span class="cert-detail-label">Issuer</span>
+                            <span class="cert-detail-val mono">CN = R3, O = Let's Encrypt</span>
+                        </div>
+                        <div class="cert-detail-item">
+                            <span class="cert-detail-label">Not Before</span>
+                            <span class="cert-detail-val">2026-06-15 00:00:00 UTC</span>
+                        </div>
+                        <div class="cert-detail-item">
+                            <span class="cert-detail-label">Not After</span>
+                            <span class="cert-detail-val" style="color:var(--warning);">2026-09-15 23:59:59 UTC</span>
+                        </div>
+                        <div class="cert-detail-item">
+                            <span class="cert-detail-label">SANs</span>
+                            <span class="cert-detail-val mono">*.example.com, example.com</span>
+                        </div>
+                        <div class="cert-detail-item">
+                            <span class="cert-detail-label">Signature Algorithm</span>
+                            <span class="cert-detail-val">SHA-256 With RSA Encryption</span>
+                        </div>
+                        <div class="cert-detail-item">
+                            <span class="cert-detail-label">Public Key</span>
+                            <span class="cert-detail-val">RSA (2048 bits)</span>
+                        </div>
+                        <div class="cert-detail-item" style="grid-column:span 2;">
+                            <span class="cert-detail-label">Fingerprint (SHA-256)</span>
+                            <span class="cert-detail-val mono" style="font-size:0.7rem;">A3:8B:1C:4D:5E:F0:12:34:56:78:90:AB:CD:EF:01:23:45:67:89:0A:BC:DE:F0:12:34:56:78:90:AB:CD:EF:01</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download & Actions -->
+                <div class="acme-section">
+                    <div class="acme-section-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download & Actions
+                    </div>
+                    <div class="acme-download-grid">
+                        <button class="acme-dl-btn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M16 8l-4 4-4-4"></path><path d="M12 12v8"></path></svg>
+                            Certificate (PEM)
+                        </button>
+                        <button class="acme-dl-btn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M16 8l-4 4-4-4"></path><path d="M12 12v8"></path></svg>
+                            Private Key (PEM)
+                        </button>
+                        <button class="acme-dl-btn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M16 8l-4 4-4-4"></path><path d="M12 12v8"></path></svg>
+                            Full Chain (PEM)
+                        </button>
+                        <button class="acme-dl-btn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M16 8l-4 4-4-4"></path><path d="M12 12v8"></path></svg>
+                            PKCS#12 (PFX)
+                        </button>
+                    </div>
+                    <div class="acme-actions" style="margin-top:16px;">
+                        <button class="btn btn-primary ent-apply-btn" style="flex:1;justify-content:center;">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Issue & Install Certificate
+                        </button>
+                        <button class="btn btn-outline ent-test-btn" style="flex:1;justify-content:center;">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                            Renew Selected
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SSH Certificate Section (smallstep feature) -->
+                <div class="acme-section">
+                    <div class="acme-section-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        SSH Certificates (smallstep-compatible)
+                    </div>
+                    <div class="acme-field-row">
+                        <div class="input-group" style="flex:1;">
+                            <label>SSH User</label>
+                            <input type="text" class="ent-field" value="deploy" placeholder="username">
+                        </div>
+                        <div class="input-group" style="flex:1;">
+                            <label>Principals</label>
+                            <input type="text" class="ent-field" value="deploy,root,ubuntu" placeholder="user,admin">
+                        </div>
+                        <div class="input-group" style="flex:1;">
+                            <label>Validity (Hours)</label>
+                            <input type="number" class="ent-field" value="24">
+                        </div>
+                    </div>
+                    <div class="acme-actions" style="margin-top:8px;">
+                        <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="alert('SSH Certificate issued for deploy@*.example.com (valid for 24h)')">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Issue SSH Cert
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="acme-actions">
+                    <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="alert(
+'Certificate Issuance Workflow\\n\\n' +
+'1. Domain: ' + document.getElementById('acme-cn').value + '\\n' +
+'2. Profile: ' + document.getElementById('acme-profile').value + '\\n' +
+'3. SANs: ' + document.getElementById('acme-sans').value + '\\n' +
+'4. Algorithm: ' + (document.querySelector('input[name=\\'key-algo\\']:checked')?.closest('.acme-algo-card')?.querySelector('.algo-name')?.textContent || 'ECDSA P-256') + '\\n\\n' +
+'Status: Order Created → Pending Authorization → Validating → Issued\\n' +
+'This is a UI prototype (like smallstep CA). Backend pending.');
+">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Quick Issue
+                    </button>
+                    <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="alert('CA certificate and intermediate downloaded successfully.\\n\\nAdd to system trust store:\\n  sudo cp ca.crt /usr/local/share/ca-certificates/\\n  sudo update-ca-certificates');">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        Download CA Bundle
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function initACMETabs() {
+        document.querySelectorAll('.acme-provider-card, .acme-challenge-card, .acme-algo-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.active').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+    }
+
+    backToEntGrid.addEventListener('click', () => {
+        document.querySelectorAll('.enterprise-header, .enterprise-grid').forEach(el => {
+            el.classList.remove('hidden');
+        });
+        entConfigView.classList.add('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.ent-btn');
+        if (btn) {
+            e.preventDefault();
+            const config = btn.getAttribute('data-config');
+            openEntConfigView(config);
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('ent-apply-btn')) {
+            e.preventDefault();
+            const isACME = entTitle.textContent.includes('ACME');
+            if (isACME) {
+                const provider = document.querySelector('input[name="acme-provider"]:checked');
+                const algo = document.querySelector('input[name="key-algo"]:checked');
+                const challenge = document.querySelector('input[name="challenge"]:checked');
+                const algoLabel = algo?.closest('.acme-algo-card')?.querySelector('.algo-name')?.textContent || 'ECDSA P-256';
+                const providerLabel = provider?.closest('.acme-provider-card')?.querySelector('.acme-provider-name')?.textContent || 'Let\'s Encrypt';
+                const challengeLabel = challenge?.closest('.acme-challenge-card')?.querySelector('strong')?.textContent || 'HTTP Challenge';
+                alert(
+`ACME Certificate Request Initiated
+
+Provider: ${providerLabel}
+Key Algorithm: ${algoLabel}
+Challenge: ${challengeLabel}
+
+Order Status: Processing
+Authorization: Pending
+Validation: Pending
+Issuance: Queued
+
+This is a UI prototype. ACME backend integration is pending.`);
+            } else {
+                const title = entTitle.textContent;
+                alert(`Configuration saved for: ${title}\n\nThis is a UI prototype. Backend integration is pending.`);
+            }
+            // Go back to enterprise grid
+            document.querySelectorAll('.enterprise-header, .enterprise-grid').forEach(el => {
+                el.classList.remove('hidden');
+            });
+            entConfigView.classList.add('hidden');
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('ent-test-btn')) {
+            e.preventDefault();
+            alert(
+`ACME Dry-Run Test
+
+✓ ACME Directory Reachable
+✓ Account Registered (admin@example.com)
+✓ Domain Validation Ready
+✓ Challenge Configured
+✓ Key Pair Generated
+× Certificate Issuance: SKIPPED (dry-run)
+
+Dry-run completed successfully. No certificates were issued.`);
         }
     });
 

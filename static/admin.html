@@ -117,6 +117,11 @@
                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
                     Virtual Switch
                 </a>
+                <a href="#" id="nav-enterprise" class="nav-enterprise">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    Enterprise Config
+                    <span class="nav-badge">PRO</span>
+                </a>
                 <a href="#" id="nav-logs">
                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     History Logs
@@ -300,6 +305,208 @@
                     </table>
                     <div id="net-loading-state" class="table-state">Loading configurations...</div>
                     <div id="net-empty-state" class="table-state hidden">No Virtual Switches configured.</div>
+                </div>
+            </div>
+
+            <!-- Enterprise Config View -->
+            <div id="enterprise-view" class="hidden">
+                <div class="enterprise-header">
+                    <div>
+                        <h2 class="enterprise-title">Enterprise Configuration</h2>
+                        <p class="enterprise-subtitle">Advanced networking, load balancing, certificate management & Kubernetes integration</p>
+                    </div>
+                </div>
+
+                <div class="enterprise-grid">
+                    <!-- L2 Switching -->
+                    <div class="ent-card">
+                        <div class="ent-card-header">
+                            <div class="ent-icon ent-icon-l2">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                            </div>
+                            <div>
+                                <h3>L2 Switching</h3>
+                                <span class="ent-badge">Layer 2</span>
+                            </div>
+                        </div>
+                        <div class="ent-features">
+                            <span class="ent-feature">VLAN</span>
+                            <span class="ent-feature">STP/RSTP/MSTP</span>
+                            <span class="ent-feature">LACP</span>
+                            <span class="ent-feature">Trunk Ports</span>
+                            <span class="ent-feature">Port Mirroring</span>
+                            <span class="ent-feature">MTU</span>
+                        </div>
+                        <button class="btn btn-outline ent-btn" data-config="l2">Configure L2</button>
+                    </div>
+
+                    <!-- BGP / OSPF / VRRP -->
+                    <div class="ent-card">
+                        <div class="ent-card-header">
+                            <div class="ent-icon ent-icon-routing">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            </div>
+                            <div>
+                                <h3>BGP / OSPF / VRRP</h3>
+                                <span class="ent-badge">Layer 3</span>
+                            </div>
+                        </div>
+                        <div class="ent-features">
+                            <span class="ent-feature">BGP</span>
+                            <span class="ent-feature">OSPF</span>
+                            <span class="ent-feature">VRRP</span>
+                            <span class="ent-feature">ECMP</span>
+                            <span class="ent-feature">Static Routes</span>
+                            <span class="ent-feature">NAT</span>
+                        </div>
+                        <button class="btn btn-outline ent-btn" data-config="routing">Configure Routing</button>
+                    </div>
+
+                    <!-- L4/L7 Load Balancer -->
+                    <div class="ent-card">
+                        <div class="ent-card-header">
+                            <div class="ent-icon ent-icon-lb">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                            </div>
+                            <div>
+                                <h3>L4/L7 Load Balancer</h3>
+                                <span class="ent-badge">HAProxy</span>
+                            </div>
+                        </div>
+                        <div class="ent-features">
+                            <span class="ent-feature">TCP/UDP LB</span>
+                            <span class="ent-feature">HTTP/HTTPS</span>
+                            <span class="ent-feature">Health Checks</span>
+                            <span class="ent-feature">Session Persistence</span>
+                            <span class="ent-feature">URL Rewriting</span>
+                            <span class="ent-feature">WebSocket</span>
+                        </div>
+                        <button class="btn btn-outline ent-btn" data-config="lb">Configure LB</button>
+                    </div>
+
+                    <!-- SSL/ACME -->
+                    <div class="ent-card">
+                        <div class="ent-card-header">
+                            <div class="ent-icon ent-icon-ssl">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </div>
+                            <div>
+                                <h3>SSL / TLS / ACME</h3>
+                                <span class="ent-badge">Certificate</span>
+                            </div>
+                        </div>
+                        <div class="ent-features">
+                            <span class="ent-feature">Let's Encrypt</span>
+                            <span class="ent-feature">Wildcard Certs</span>
+                            <span class="ent-feature">Auto Renewal</span>
+                            <span class="ent-feature">Internal CA</span>
+                            <span class="ent-feature">Certificate Upload</span>
+                            <span class="ent-feature">mTLS</span>
+                        </div>
+                        <button class="btn btn-outline ent-btn" data-config="ssl">Configure SSL</button>
+                    </div>
+
+                    <!-- K8s LoadBalancer -->
+                    <div class="ent-card">
+                        <div class="ent-card-header">
+                            <div class="ent-icon ent-icon-k8s">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"></path></svg>
+                            </div>
+                            <div>
+                                <h3>K8s LoadBalancer</h3>
+                                <span class="ent-badge">Controller</span>
+                            </div>
+                        </div>
+                        <div class="ent-features">
+                            <span class="ent-feature">Service Watcher</span>
+                            <span class="ent-feature">Ingress Watcher</span>
+                            <span class="ent-feature">IP Pool Mgmt</span>
+                            <span class="ent-feature">VIP Allocation</span>
+                            <span class="ent-feature">Status Updates</span>
+                            <span class="ent-feature">Multi-Cluster</span>
+                        </div>
+                        <button class="btn btn-outline ent-btn" data-config="k8s">Configure K8s</button>
+                    </div>
+
+                    <!-- IPAM -->
+                    <div class="ent-card">
+                        <div class="ent-card-header">
+                            <div class="ent-icon ent-icon-ipam">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2a10 10 0 0 1 10 10c0 4.5-4 8-10 10S2 16.5 2 12 6.5 2 12 2z"></path><circle cx="12" cy="12" r="3"></circle><path d="M12 2v4M22 12h-4M12 18v4M6 12H2"></path></svg>
+                            </div>
+                            <div>
+                                <h3>IP Address Management</h3>
+                                <span class="ent-badge">IPAM</span>
+                            </div>
+                        </div>
+                        <div class="ent-features">
+                            <span class="ent-feature">Public IP Pools</span>
+                            <span class="ent-feature">Private IP Pools</span>
+                            <span class="ent-feature">Floating IPs</span>
+                            <span class="ent-feature">VIPs</span>
+                            <span class="ent-feature">DHCP Ranges</span>
+                            <span class="ent-feature">IPv4/IPv6</span>
+                        </div>
+                        <button class="btn btn-outline ent-btn" data-config="ipam">Configure IPAM</button>
+                    </div>
+
+                    <!-- Bandwidth Control -->
+                    <div class="ent-card">
+                        <div class="ent-card-header">
+                            <div class="ent-icon ent-icon-bw">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                            </div>
+                            <div>
+                                <h3>Bandwidth Control</h3>
+                                <span class="ent-badge">QoS</span>
+                            </div>
+                        </div>
+                        <div class="ent-features">
+                            <span class="ent-feature">Per-Port Limits</span>
+                            <span class="ent-feature">Per-VLAN Limits</span>
+                            <span class="ent-feature">Per-IP Limits</span>
+                            <span class="ent-feature">Burst Settings</span>
+                            <span class="ent-feature">Traffic Shaping</span>
+                            <span class="ent-feature">Priority Queues</span>
+                        </div>
+                        <button class="btn btn-outline ent-btn" data-config="qos">Configure QoS</button>
+                    </div>
+
+                    <!-- HA Clustering -->
+                    <div class="ent-card">
+                        <div class="ent-card-header">
+                            <div class="ent-icon ent-icon-ha">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 8a6 6 0 0 1 6 6v4h-4v-4a2 2 0 0 0-2-2h-2v4h-4v-6a4 4 0 0 1 4-4h2z"></path><path d="M6 8a6 6 0 0 0-6 6v4h4v-4a2 2 0 0 1 2-2h2v4h4v-6a4 4 0 0 0-4-4H6z"></path></svg>
+                            </div>
+                            <div>
+                                <h3>HA Clustering</h3>
+                                <span class="ent-badge">etcd</span>
+                            </div>
+                        </div>
+                        <div class="ent-features">
+                            <span class="ent-feature">Active/Standby</span>
+                            <span class="ent-feature">Config Sync</span>
+                            <span class="ent-feature">Leader Election</span>
+                            <span class="ent-feature">Floating VIPs</span>
+                            <span class="ent-feature">Health Monitoring</span>
+                            <span class="ent-feature">Auto Failover</span>
+                        </div>
+                        <button class="btn btn-outline ent-btn" data-config="ha">Configure HA</button>
+                    </div>
+                </div>
+
+                <!-- Enterprise Config Full Page View (replaces grid) -->
+                <div id="ent-config-view" class="hidden">
+                    <div class="ent-config-topbar">
+                        <button class="btn btn-outline" id="back-to-ent-grid">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Back to Enterprise Config
+                        </button>
+                        <h2 id="ent-config-title">Configure</h2>
+                    </div>
+                    <div class="ent-config-body" id="ent-config-body">
+                        <!-- Dynamic content injected by JS -->
+                    </div>
                 </div>
             </div>
 

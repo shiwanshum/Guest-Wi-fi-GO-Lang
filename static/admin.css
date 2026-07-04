@@ -1248,6 +1248,590 @@ td code {
 }
 
 /* =============================================
+   ENTERPRISE CONFIG
+   ============================================= */
+.nav-enterprise {
+    position: relative;
+    border-left: 3px solid transparent;
+}
+
+.nav-enterprise.active {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.15), transparent) !important;
+    color: #ef4444 !important;
+    border-left-color: #ef4444 !important;
+}
+
+.nav-enterprise.active svg {
+    filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5)) !important;
+}
+
+.nav-enterprise:hover {
+    border-left-color: rgba(239, 68, 68, 0.3);
+}
+
+.nav-badge {
+    margin-left: auto;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    letter-spacing: 0.5px;
+}
+
+.enterprise-header {
+    margin-bottom: 32px;
+}
+
+.enterprise-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.enterprise-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 6px;
+}
+
+.enterprise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.ent-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.ent-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.ent-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.ent-card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.ent-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ent-icon-l2 { background: rgba(99, 102, 241, 0.15); color: var(--primary); }
+.ent-icon-routing { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+.ent-icon-lb { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.ent-icon-ssl { background: rgba(236, 72, 153, 0.15); color: var(--secondary); }
+.ent-icon-k8s { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.ent-icon-ipam { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+.ent-icon-bw { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+.ent-icon-ha { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+
+.ent-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ent-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+    flex: 1;
+    align-content: flex-start;
+}
+
+.ent-feature {
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+}
+
+.ent-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: auto;
+}
+
+/* =============================================
+   ACME CORE COMPONENT
+   ============================================= */
+.acme-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 20px;
+    max-width: 100%;
+}
+
+.acme-section {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+}
+
+.acme-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.acme-section-title svg {
+    color: var(--secondary);
+}
+
+.acme-field-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+/* Provider Cards */
+.acme-provider-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.acme-provider-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.acme-provider-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.acme-provider-card.active {
+    border-color: var(--secondary);
+    background: rgba(236, 72, 153, 0.08);
+    box-shadow: 0 0 12px rgba(236, 72, 153, 0.15);
+}
+
+.acme-provider-card svg { color: var(--secondary); }
+
+.acme-provider-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.acme-provider-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Domain List */
+.acme-domain-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.acme-domain-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.acme-domain-name {
+    flex: 1;
+    font-weight: 500;
+    font-size: 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Challenge Cards */
+.acme-challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.acme-challenge-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.acme-challenge-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.acme-challenge-card.active {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.08);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+}
+
+.acme-challenge-card strong {
+    font-size: 0.85rem;
+}
+
+.acme-challenge-card span {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.challenge-icon {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    letter-spacing: 0.5px;
+    font-family: monospace;
+}
+
+.challenge-icon-dns {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+}
+
+.challenge-icon-tls {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+}
+
+/* Key Algorithm Grid */
+.acme-algo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.acme-algo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.acme-algo-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.acme-algo-card.active {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.08);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
+}
+
+.algo-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.algo-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.algo-tag {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.algo-strength {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--warning);
+    margin-top: 2px;
+}
+
+.algo-strength-higher { color: var(--success); }
+.algo-strength-max { color: var(--danger); }
+
+/* Cipher Suite */
+.acme-cipher-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cipher-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    font-size: 0.78rem;
+}
+
+.cipher-item code {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: #e2e8f0;
+}
+
+.cipher-badge {
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--primary);
+}
+
+/* Encryption Methods */
+.acme-encryption-methods {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.enc-method {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.enc-method-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* Certificate Chain */
+.acme-chain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+.chain-node {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+}
+
+.chain-root { border-left: 3px solid var(--primary); }
+.chain-intermediate { border-left: 3px solid var(--warning); }
+.chain-leaf { border-left: 3px solid var(--success); }
+
+.chain-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.chain-root .chain-dot { background: var(--primary); box-shadow: 0 0 6px var(--primary); }
+.chain-intermediate .chain-dot { background: var(--warning); box-shadow: 0 0 6px var(--warning); }
+.chain-leaf .chain-dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+.chain-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.chain-info strong {
+    font-size: 0.9rem;
+}
+
+.chain-info span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.chain-connector {
+    width: 2px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* ACME Actions */
+.acme-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* =============================================
+   ENTERPRISE CONFIG FULL PAGE
+   ============================================= */
+.ent-config-topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ent-config-topbar h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #fff, #cbd5e1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ent-config-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 900px;
+    animation: fadeIn 0.3s ease;
+}
+
+.ent-config-body .input-group {
+    margin-bottom: 4px;
+}
+
+.ent-config-body .ent-field {
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-main);
+    outline: none;
+    transition: all 0.3s;
+    font-family: inherit;
+    width: 100%;
+}
+
+.ent-config-body .ent-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.ent-config-body .ent-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ent-config-body .ent-field-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+
+.ent-config-body .ent-apply-btn {
+    width: fit-content;
+    min-width: 240px;
+    justify-content: center;
+    margin-top: 8px;
+    padding: 14px 32px;
+    font-size: 1rem;
+}
+
+/* Ent panel scrollable (for virtual switch side panel, kept for compatibility) */
+#ent-config-body {
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Side panel for virtual switch - keep old styles */
+.side-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    width: 400px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--border);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.side-panel.open { transform: translateX(0); }
+
+/* =============================================
    SCROLLBAR
    ============================================= */
 ::-webkit-scrollbar { width: 6px; }
