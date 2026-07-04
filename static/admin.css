@@ -419,3 +419,244 @@ tbody tr:hover {
     gap: 16px;
     background: rgba(255, 255, 255, 0.02);
 }
+
+/* =========================================
+   Interactive Hardware Switch UI
+========================================= */
+.hardware-switch-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 24px;
+    padding: 20px 0;
+}
+
+.hardware-switch {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(180deg, #2a2d35 0%, #1a1c23 100%);
+    border: 2px solid #444;
+    border-radius: 8px;
+    padding: 16px 24px;
+    min-width: 900px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.1);
+    position: relative;
+}
+
+/* Rack mount ears */
+.hardware-switch::before, .hardware-switch::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: calc(100% - 16px);
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    top: 8px;
+}
+.hardware-switch::before { left: -16px; }
+.hardware-switch::after { right: -16px; }
+
+.switch-left {
+    flex: 0 0 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.switch-logo {
+    color: #4CAF50;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+.switch-model {
+    color: #888;
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+.ports-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 12px 8px;
+    padding: 0 24px;
+    border-left: 2px solid #333;
+    border-right: 2px solid #333;
+}
+
+.port-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.port-slot:hover {
+    transform: scale(1.1);
+}
+
+.port-label {
+    font-size: 0.65rem;
+    color: #aaa;
+    margin-bottom: 4px;
+    font-family: monospace;
+}
+
+/* Bottom row ports have label on bottom */
+.port-slot.bottom-row {
+    flex-direction: column-reverse;
+}
+.port-slot.bottom-row .port-label {
+    margin-bottom: 0;
+    margin-top: 4px;
+}
+
+.rj45 {
+    width: 36px;
+    height: 32px;
+    background: #000;
+    border: 2px solid #555;
+    border-radius: 2px;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.1);
+}
+
+.rj45::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 8px;
+    background: #222;
+    border-top: 1px solid #444;
+}
+
+/* LED Indicator inside port */
+.port-led {
+    width: 6px;
+    height: 6px;
+    background: #333;
+    border-radius: 50%;
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 2px rgba(0,0,0,0.8);
+    transition: all 0.3s;
+}
+.port-slot.bottom-row .port-led {
+    top: auto;
+    bottom: -8px;
+}
+
+.port-slot.active .port-led {
+    background: #4CAF50;
+    box-shadow: 0 0 8px #4CAF50, inset 0 0 4px #fff;
+}
+
+.port-slot.selected .rj45 {
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(0, 198, 255, 0.6);
+}
+
+.switch-right {
+    flex: 0 0 80px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.status-leds {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sys-led, .stat-led {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.65rem;
+    color: #aaa;
+}
+
+.led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #333;
+}
+.led.pulse-green {
+    background: #4CAF50;
+    box-shadow: 0 0 8px #4CAF50;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+/* Side Panel for Config */
+.side-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    width: 400px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--border);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.side-panel.open {
+    transform: translateX(0);
+}
+
+.panel-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-form {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+    color: var(--text-main);
+    outline: none;
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.1);
+}

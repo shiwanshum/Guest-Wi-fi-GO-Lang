@@ -164,6 +164,80 @@ document.addEventListener('DOMContentLoaded', () => {
     const addNetBtn = document.getElementById('add-net-btn');
     const netLoading = document.getElementById('net-loading-state');
     const netEmpty = document.getElementById('net-empty-state');
+    
+    // Switch UI Elements
+    const switchPortsContainer = document.getElementById('switch-ports');
+    const portConfigPanel = document.getElementById('port-config-panel');
+    const closePanelBtn = document.getElementById('close-panel-btn');
+    const configPortTitle = document.getElementById('config-port-title');
+    const configPortNum = document.getElementById('config-port-num');
+    
+    // Generate 24 ports for the UI
+    let activeNetworks = [];
+    
+    function renderSwitchUI() {
+        switchPortsContainer.innerHTML = '';
+        for (let i = 1; i <= 24; i++) {
+            const isBottomRow = i > 12;
+            const slot = document.createElement('div');
+            slot.className = `port-slot ${isBottomRow ? 'bottom-row' : ''}`;
+            slot.dataset.port = i;
+            
+            slot.innerHTML = `
+                <div class="port-led"></div>
+                <div class="rj45"></div>
+                <div class="port-label">${i}</div>
+            `;
+            
+            slot.addEventListener('click', () => openPortConfig(i));
+            switchPortsContainer.appendChild(slot);
+        }
+        updateSwitchLEDs();
+    }
+    
+    function updateSwitchLEDs() {
+        document.querySelectorAll('.port-slot').forEach(slot => {
+            const portNum = parseInt(slot.dataset.port);
+            // Just simulating active ports based on existing VLAN configurations
+            // We map VLAN config index to port numbers for visual effect
+            if (activeNetworks[portNum - 1]) {
+                slot.classList.add('active');
+                slot.title = `VLAN: ${activeNetworks[portNum - 1].vlan_id}`;
+            } else {
+                slot.classList.remove('active');
+                slot.title = `Port ${portNum} - Empty`;
+            }
+        });
+    }
+
+    function openPortConfig(portNum) {
+        document.querySelectorAll('.port-slot').forEach(s => s.classList.remove('selected'));
+        const activeSlot = document.querySelector(`.port-slot[data-port="${portNum}"]`);
+        if(activeSlot) activeSlot.classList.add('selected');
+        
+        configPortTitle.textContent = `Configure Port ${portNum}`;
+        configPortNum.value = portNum;
+        
+        // If this port already has a mapped config, populate it
+        const existingNet = activeNetworks[portNum - 1];
+        if (existingNet) {
+            document.getElementById('vlan-id').value = existingNet.vlan_id;
+            document.getElementById('ip-range').value = existingNet.ip_range;
+            document.getElementById('net-desc').value = existingNet.description;
+            addNetBtn.textContent = 'Update Configuration';
+        } else {
+            netForm.reset();
+            configPortNum.value = portNum; // reset clears hidden inputs sometimes
+            addNetBtn.textContent = 'Inject Configuration';
+        }
+        
+        portConfigPanel.classList.add('open');
+    }
+
+    closePanelBtn.addEventListener('click', () => {
+        portConfigPanel.classList.remove('open');
+        document.querySelectorAll('.port-slot').forEach(s => s.classList.remove('selected'));
+    });
 
     async function fetchNetworks() {
         netLoading.classList.remove('hidden');
@@ -173,13 +247,15 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch('/api/admin/networks');
             if (res.ok) {
-                const data = await res.json() || [];
+                activeNetworks = await res.json() || [];
                 netLoading.classList.add('hidden');
                 
-                if (data.length === 0) {
+                renderSwitchUI();
+                
+                if (activeNetworks.length === 0) {
                     netEmpty.classList.remove('hidden');
                 } else {
-                    data.forEach(net => {
+                    activeNetworks.forEach(net => {
                         const tr = document.createElement('tr');
                         const created = new Date(net.created_at).toLocaleString();
                         tr.innerHTML = `
@@ -201,6 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
     netForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         addNetBtn.disabled = true;
+        const originalText = addNetBtn.textContent;
         addNetBtn.textContent = 'Injecting...';
 
         const vlan_id = parseInt(document.getElementById('vlan-id').value);
@@ -216,19 +293,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (res.ok) {
                 netForm.reset();
+                portConfigPanel.classList.remove('open');
+                document.querySelectorAll('.port-slot').forEach(s => s.classList.remove('selected'));
                 fetchNetworks();
             } else {
                 const errorMsg = await res.text();
-                alert(`Failed to add Virtual Switch config: ${errorMsg}`);
+                alert(`Failed to configure port: ${errorMsg}`);
             }
         } catch (error) {
             console.error(error);
         } finally {
             addNetBtn.disabled = false;
-            addNetBtn.textContent = 'Inject VLAN';
+            addNetBtn.textContent = originalText;
         }
     });
 
     // Initial fetch
     fetchSessions();
+    renderSwitchUI();
 });

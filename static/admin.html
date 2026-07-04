@@ -96,22 +96,46 @@
         <!-- Virtual Switch View -->
         <div id="network-view" class="hidden">
             <div class="stats-row">
-                <div class="stat-card network-form-card" style="grid-column: span 3;">
-                    <h3 style="margin-bottom: 16px; color: var(--text-main); font-weight: 600;">Publish New IP Range / VLAN</h3>
-                    <form id="network-form" style="display: grid; grid-template-columns: 1fr 1fr 2fr auto; gap: 16px; align-items: end;">
-                        <div>
-                            <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">VLAN ID</label>
-                            <input type="number" id="vlan-id" required min="1" max="4095" placeholder="e.g., 20" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;" title="VLAN ID must be between 1 and 4095">
+                <div class="hardware-switch-container">
+                    <div class="hardware-switch">
+                        <div class="switch-left">
+                            <div class="switch-logo">SYS-CORE</div>
+                            <div class="switch-model">Virtual Switch 24G</div>
                         </div>
-                        <div>
-                            <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">IP Range (CIDR)</label>
-                            <input type="text" id="ip-range" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$" placeholder="192.168.20.0/24" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;" title="Must be a valid IPv4 CIDR (e.g. 192.168.20.0/24)">
+                        <div class="ports-grid" id="switch-ports">
+                            <!-- 24 ports injected via JS -->
                         </div>
-                        <div>
-                            <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Description</label>
-                            <input type="text" id="net-desc" maxlength="255" placeholder="Guest Network Zone B" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;">
+                        <div class="switch-right">
+                            <div class="status-leds">
+                                <div class="sys-led"><span>SYS</span><div class="led pulse-green"></div></div>
+                                <div class="stat-led"><span>PWR</span><div class="led pulse-green"></div></div>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" id="add-net-btn" style="height: 38px;">Inject VLAN</button>
+                    </div>
+                </div>
+
+                <!-- Sliding Panel for Port Config -->
+                <div id="port-config-panel" class="side-panel hidden">
+                    <div class="panel-header">
+                        <h2 id="config-port-title">Configure Port</h2>
+                        <button class="close-btn" id="close-panel-btn">&times;</button>
+                    </div>
+                    <form id="network-form" class="panel-form">
+                        <input type="hidden" id="config-port-num">
+                        <div class="input-group">
+                            <label>VLAN ID</label>
+                            <input type="number" id="vlan-id" required min="1" max="4095" placeholder="e.g., 20" title="VLAN ID must be between 1 and 4095">
+                        </div>
+                        <div class="input-group">
+                            <label>IP Range (CIDR)</label>
+                            <input type="text" id="ip-range" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$" placeholder="192.168.20.0/24" title="Must be a valid IPv4 CIDR (e.g. 192.168.20.0/24)">
+                        </div>
+                        <div class="input-group">
+                            <label>Description (Optional)</label>
+                            <input type="text" id="net-desc" maxlength="255" placeholder="Guest Network Zone B">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="add-net-btn">Inject Configuration</button>
+                        <button type="button" class="btn btn-outline" id="remove-net-btn" style="display:none; margin-top: 8px;">Remove VLAN</button>
                     </form>
                 </div>
             </div>
