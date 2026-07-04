@@ -101,15 +101,15 @@
                     <form id="network-form" style="display: grid; grid-template-columns: 1fr 1fr 2fr auto; gap: 16px; align-items: end;">
                         <div>
                             <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">VLAN ID</label>
-                            <input type="number" id="vlan-id" required placeholder="e.g., 20" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;">
+                            <input type="number" id="vlan-id" required min="1" max="4095" placeholder="e.g., 20" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;" title="VLAN ID must be between 1 and 4095">
                         </div>
                         <div>
                             <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">IP Range (CIDR)</label>
-                            <input type="text" id="ip-range" required placeholder="192.168.20.0/24" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;">
+                            <input type="text" id="ip-range" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$" placeholder="192.168.20.0/24" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;" title="Must be a valid IPv4 CIDR (e.g. 192.168.20.0/24)">
                         </div>
                         <div>
                             <label style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Description</label>
-                            <input type="text" id="net-desc" placeholder="Guest Network Zone B" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;">
+                            <input type="text" id="net-desc" maxlength="255" placeholder="Guest Network Zone B" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; outline:none;">
                         </div>
                         <button type="submit" class="btn btn-primary" id="add-net-btn" style="height: 38px;">Inject VLAN</button>
                     </form>

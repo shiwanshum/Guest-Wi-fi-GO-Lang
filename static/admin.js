@@ -218,7 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 netForm.reset();
                 fetchNetworks();
             } else {
-                alert('Failed to add Virtual Switch config');
+                const errorMsg = await res.text();
+                alert(`Failed to add Virtual Switch config: ${errorMsg}`);
             }
         } catch (error) {
             console.error(error);

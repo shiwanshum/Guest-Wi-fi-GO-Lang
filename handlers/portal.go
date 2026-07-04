@@ -102,7 +102,18 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 
 	var req VerifyRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
+		return
+	}
+
+	// Backend Validation Crosscheck
+	if match, _ := regexp.MatchString(`^\+\d{1,3}-\d{10}$`, req.Mobile); !match {
+		http.Error(w, "Invalid mobile number format", http.StatusBadRequest)
+		return
+	}
+
+	if match, _ := regexp.MatchString(`^\d{4}$`, req.OTP); !match {
+		http.Error(w, "OTP must be exactly 4 digits", http.StatusBadRequest)
 		return
 	}
 
