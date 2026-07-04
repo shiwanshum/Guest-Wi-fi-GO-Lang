@@ -325,13 +325,13 @@ body {
 /* OTP Inputs */
 .otp-inputs {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-bottom: 32px;
-    gap: 12px;
+    gap: 16px;
 }
 
 .otp-digit {
-    flex: 1;
+    width: 72px;
     height: 72px;
     text-align: center;
     font-size: 2.2rem;
@@ -417,7 +417,12 @@ body {
         border-radius: 24px;
     }
     
+    .otp-inputs {
+        gap: 10px;
+    }
+    
     .otp-digit {
+        width: 56px;
         height: 64px;
         font-size: 1.75rem;
         border-radius: 16px;
