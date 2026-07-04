@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"net"
+	net_pkg "net"
 	"net/http"
 	"strings"
 
@@ -54,12 +54,12 @@ func CreateNetworkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Backend Validation Crosscheck for Network Inputs
-	if net.VlanID < 1 || net.VlanID > 4095 {
+	if net.VLANID < 1 || net.VLANID > 4095 {
 		http.Error(w, "VLAN ID must be between 1 and 4095", http.StatusBadRequest)
 		return
 	}
 
-	if _, _, err := net.ParseCIDR(net.IPRange); err != nil {
+	if _, _, err := net_pkg.ParseCIDR(net.IPRange); err != nil {
 		http.Error(w, "Invalid IP Range CIDR format (e.g., 192.168.10.0/24)", http.StatusBadRequest)
 		return
 	}
