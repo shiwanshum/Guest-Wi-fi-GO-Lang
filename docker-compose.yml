@@ -4,14 +4,14 @@ services:
   portal:
     build: .
     ports:
-      - "8082:8080"
-      - "8083:8081"
+      - "8090:8080"
+      - "8091:8081"
     environment:
       - PORT=8080
       - ADMIN_PORT=8081
       - NATS_URL=nats://nats:4222
     volumes:
-      - portal_data:/app
+      - portal_data:/data
     depends_on:
       - nats
 

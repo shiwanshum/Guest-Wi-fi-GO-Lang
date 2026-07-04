@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	// Initialize Database
-	models.InitDB("./guest-wifi.db")
+	// Initialize Database (store in /data volume to avoid shadowing /app)
+	models.InitDB("/data/guest-wifi.db")
 
 	// Initialize NATS & Worker
 	services.InitNATS()
