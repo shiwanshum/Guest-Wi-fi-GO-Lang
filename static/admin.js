@@ -586,6 +586,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const removeNetBtn = document.getElementById('remove-net-btn');
+
     function openPortConfig(portNum) {
         document.querySelectorAll('.port-slot').forEach(s => s.classList.remove('selected'));
         const activeSlot = document.querySelector(`.port-slot[data-port="${portNum}"]`);
@@ -603,10 +605,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('vip-ips').value = existingNet.vip_ips || '';
             document.getElementById('net-desc').value = existingNet.description || '';
             addNetBtn.textContent = 'Update Configuration';
+            removeNetBtn.classList.remove('hidden');
+            removeNetBtn.dataset.port = portNum;
         } else {
             netForm.reset();
             configPortNum.value = portNum;
             addNetBtn.textContent = 'Inject Configuration';
+            removeNetBtn.classList.add('hidden');
         }
 
         portConfigPanel.classList.add('open');
@@ -615,6 +620,32 @@ document.addEventListener('DOMContentLoaded', () => {
     closePanelBtn.addEventListener('click', () => {
         portConfigPanel.classList.remove('open');
         document.querySelectorAll('.port-slot').forEach(s => s.classList.remove('selected'));
+    });
+
+    removeNetBtn.addEventListener('click', async () => {
+        const portNum = parseInt(removeNetBtn.dataset.port);
+        if (!confirm(`Remove VLAN configuration from Port ${portNum}?`)) return;
+
+        try {
+            const res = await fetch('/api/admin/networks/remove', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    switch_id: currentSwitchSize.toString(),
+                    port_num: portNum
+                })
+            });
+            if (res.ok) {
+                portConfigPanel.classList.remove('open');
+                document.querySelectorAll('.port-slot').forEach(s => s.classList.remove('selected'));
+                fetchNetworks();
+            } else {
+                const err = await res.text();
+                alert('Failed to remove: ' + err);
+            }
+        } catch (err) {
+            console.error(err);
+        }
     });
 
     async function fetchNetworks() {

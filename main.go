@@ -63,10 +63,13 @@ func main() {
 			handlers.GetNetworksHandler(w, r)
 		} else if r.Method == http.MethodPost {
 			handlers.CreateNetworkHandler(w, r)
+		} else if r.Method == http.MethodDelete {
+			handlers.DeleteNetworkHandler(w, r)
 		} else {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
+	adminMux.HandleFunc("/api/admin/networks/remove", handlers.DeleteNetworkHandler)
 
 	// ---------------------------------------------------------
 	// Start Servers

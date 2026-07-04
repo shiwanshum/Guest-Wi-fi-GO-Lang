@@ -275,6 +275,35 @@ func GetNetworksHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(networks)
 }
 
+func DeleteNetworkHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete && r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req struct {
+		SwitchID string `json:"switch_id"`
+		PortNum  int    `json:"port_num"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	if req.PortNum < 1 || req.PortNum > 48 {
+		http.Error(w, "Port Number must be between 1 and 48", http.StatusBadRequest)
+		return
+	}
+
+	if err := models.DeleteNetwork(req.SwitchID, req.PortNum); err != nil {
+		http.Error(w, "Failed to remove network", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "removed"})
+}
+
 func CreateNetworkHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

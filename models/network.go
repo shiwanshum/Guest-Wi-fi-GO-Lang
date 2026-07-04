@@ -37,6 +37,12 @@ func GetAllNetworks(switchID string) ([]Network, error) {
 	return networks, nil
 }
 
+func DeleteNetwork(switchID string, portNum int) error {
+	query := `DELETE FROM networks WHERE switch_id = $1 AND port_num = $2`
+	_, err := DB.Exec(query, switchID, portNum)
+	return err
+}
+
 func CreateNetwork(net *Network) error {
 	query := `
 		INSERT INTO networks (switch_id, port_num, port_mode, bandwidth_limit, vip_ips, vlan_id, ip_range, description) 
