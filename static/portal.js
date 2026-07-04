@@ -126,7 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Transition to Success view
                 otpView.classList.add('hidden');
                 successView.classList.remove('hidden');
-                startCountdown(2 * 60 * 60); // 2 hours in seconds
+                
+                // Redirect to Google after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'https://google.com';
+                }, 3000);
             } else {
                 alert('Invalid OTP. Please try again.');
                 otpInputs.forEach(i => i.value = '');
@@ -140,27 +144,4 @@ document.addEventListener('DOMContentLoaded', () => {
             verifyBtn.disabled = false;
         }
     });
-
-    function startCountdown(durationInSeconds) {
-        let timer = durationInSeconds;
-        const display = document.getElementById('countdown-timer');
-        
-        const interval = setInterval(() => {
-            const hours = parseInt(timer / 3600, 10);
-            const minutes = parseInt((timer % 3600) / 60, 10);
-            const seconds = parseInt(timer % 60, 10);
-
-            const h = hours < 10 ? "0" + hours : hours;
-            const m = minutes < 10 ? "0" + minutes : minutes;
-            const s = seconds < 10 ? "0" + seconds : seconds;
-
-            display.textContent = h + ":" + m + ":" + s;
-
-            if (--timer < 0) {
-                clearInterval(interval);
-                display.textContent = "Session Expired";
-                display.style.color = "var(--danger)";
-            }
-        }, 1000);
-    }
 });
